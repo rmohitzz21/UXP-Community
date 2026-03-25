@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UX Pacific - Admin Login</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #7b61ff;
+            --primary-hover: #7155d9;
+            --background-color: #050510;
+            --surface-color: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: #b5b5c3;
+            --border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(#0b0b24, #020210);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Seamless noise background */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.04"/%3E%3C/svg%3E');
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.04;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Gabarito', sans-serif;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 440px;
+            padding: 48px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .login-logo {
+            margin-bottom: 24px;
+        }
+
+        .login-logo img {
+            height: 48px;
+            width: auto;
+        }
+
+        .login-header {
+            margin-bottom: 32px;
+        }
+
+        .login-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .login-header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px 14px 44px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 0 4px rgba(123, 97, 255, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(123, 97, 255, 0.4);
+            margin-top: 8px;
+        }
+
+        .login-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(123, 97, 255, 0.6);
+        }
+
+        .forgot-password {
+            display: block;
+            margin-top: 24px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .forgot-password:hover {
+            color: var(--text-primary);
+        }
+
+        /* Decorative Shapes */
+        .shape {
+            position: absolute;
+            filter: blur(90px);
+            opacity: 0.4;
+            z-index: -1;
+            border-radius: 50%;
+        }
+        
+        .shape-1 {
+            top: 10%;
+            left: 10%;
+            width: 30vw;
+            height: 30vw;
+            background: rgba(123, 97, 255, 0.3);
+        }
+
+        .shape-2 {
+            bottom: 10%;
+            right: 10%;
+            width: 25vw;
+            height: 25vw;
+            background: rgba(45, 212, 191, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+
+    <div class="login-container">
+        <div class="login-logo">
+            <a href="index.html">
+                <img src="img/LOGO.png" alt="UX Pacific Logo">
+            </a>
+        </div>
+        <div class="login-header">
+            <h2>Admin Login</h2>
+            <p>Welcome back! Please securely enter your credentials.</p>
+        </div>
+
+        <!-- The form redirects to dashboard.html on submission -->
+        <form action="dashboard.html" method="GET">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <div class="input-wrapper">
+                    <i class="fa-regular fa-envelope"></i>
+                    <input type="email" id="email" name="email" placeholder="admin@uxpacific.com" required autocomplete="email">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+            </div>
+
+            <button type="submit" class="login-btn">Secure Login</button>
+            <a href="#" class="forgot-password">Forgot password?</a>
+        </form>
+    </div>
+
+</body>
+</html>
