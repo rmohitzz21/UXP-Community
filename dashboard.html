@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UX Pacific - Admin Dashboard</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="index.html">
+                    <img src="img/LOGO.png" alt="UX Pacific Logo" style="height: 40px; width: auto;" />
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="#dashboard" data-target="dashboard"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                    <li><a href="#events" data-target="events"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
+                    <li><a href="#resources" data-target="resources"><i class="fa-solid fa-folder-open"></i> Resources</a></li>
+                    <li><a href="#team" data-target="team"><i class="fa-solid fa-users"></i> Our Team</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="index.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Back to Site</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="search-bar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="user-profile">
+                    <div class="notifications">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <img src="https://ui-avatars.com/api/?name=Admin+User&background=6147bd&color=fff" alt="Admin User">
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="page-header">
+                    <h1 id="page-title">Dashboard Overview</h1>
+                    <button class="primary-btn" id="mainActionBtn"><i class="fa-solid fa-plus"></i> <span id="btnText">Create New</span></button>
+                </div>
+
+                <!-- Dashboard Section -->
+                <div id="section-dashboard" class="page-section active">
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon events-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                            <div class="stat-details">
+                                <h3>Total Events</h3>
+                                <p class="stat-number">24</p>
+                                <span class="stat-change positive"><i class="fa-solid fa-arrow-up"></i> 12%</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon resources-icon"><i class="fa-solid fa-book"></i></div>
+                            <div class="stat-details">
+                                <h3>Resources</h3>
+                                <p class="stat-number">142</p>
+                                <span class="stat-change positive"><i class="fa-solid fa-arrow-up"></i> 5%</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon team-icon"><i class="fa-solid fa-users"></i></div>
+                            <div class="stat-details">
+                                <h3>Team Members</h3>
+                                <p class="stat-number">18</p>
+                                <span class="stat-change neutral"><i class="fa-solid fa-minus"></i> 0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity & Upcoming Events -->
+                    <div class="dashboard-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Upcoming Events</h2>
+                                <a href="#events" class="view-all" onclick="document.querySelector('[data-target=\'events\']').click()">View All</a>
+                            </div>
+                            <div class="card-body">
+                                <ul class="activity-list">
+                                    <li>
+                                        <div class="activity-icon"><i class="fa-solid fa-palette"></i></div>
+                                        <div class="activity-info">
+                                            <h4>UI/UX Masterclass</h4>
+                                            <p>Tomorrow, 10:00 AM</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Latest Resources</h2>
+                                <button class="icon-btn"><i class="fa-solid fa-ellipsis"></i></button>
+                            </div>
+                            <div class="card-body">
+                                <ul class="resource-list">
+                                    <li>
+                                        <div class="resource-type pdf"><i class="fa-solid fa-file-pdf"></i></div>
+                                        <div class="resource-info">
+                                            <h4>Design System Guide</h4>
+                                            <p>Added 2 hrs ago</p>
+                                        </div>
+                                        <button class="download-btn"><i class="fa-solid fa-download"></i></button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Events Section (Inner Page) -->
+                <div id="section-events" class="page-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>All Events</h2>
+                            <button class="icon-btn"><i class="fa-solid fa-filter"></i></button>
+                        </div>
+                        <div class="card-body">
+                            <ul class="activity-list">
+                                <li>
+                                    <div class="activity-icon"><i class="fa-solid fa-palette"></i></div>
+                                    <div class="activity-info">
+                                        <h4>UI/UX Masterclass</h4>
+                                        <p>Tomorrow, 10:00 AM - Virtual</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="activity-icon"><i class="fa-solid fa-code"></i></div>
+                                    <div class="activity-info">
+                                        <h4>Frontend Workshop</h4>
+                                        <p>Oct 24, 2:00 PM - Virtual</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resources Section (Inner Page) -->
+                <div id="section-resources" class="page-section">
+                    <div class="stats-grid mb-4">
+                        <div class="stat-card">
+                            <div class="stat-details">
+                                <h3>Articles</h3>
+                                <p class="stat-number">45</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-details">
+                                <h3>Templates</h3>
+                                <p class="stat-number">22</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-details">
+                                <h3>Videos</h3>
+                                <p class="stat-number">75</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                         <div class="card-header">
+                            <h2>Resource Library</h2>
+                            <button class="icon-btn"><i class="fa-solid fa-filter"></i></button>
+                        </div>
+                        <div class="card-body">
+                            <ul class="resource-list">
+                                 <li>
+                                    <div class="resource-type pdf"><i class="fa-solid fa-file-pdf"></i></div>
+                                    <div class="resource-info">
+                                        <h4>Design System Guide</h4>
+                                        <p>Added 2 hrs ago</p>
+                                    </div>
+                                    <button class="download-btn"><i class="fa-solid fa-download"></i></button>
+                                </li>
+                                <li>
+                                    <div class="resource-type figma"><i class="fa-brands fa-figma"></i></div>
+                                    <div class="resource-info">
+                                        <h4>Web UI Kit 2024</h4>
+                                        <p>Added 5 hrs ago</p>
+                                    </div>
+                                    <button class="download-btn"><i class="fa-solid fa-download"></i></button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Section (Inner Page) -->
+                <div id="section-team" class="page-section">
+                    <div class="dashboard-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Team Members</h2>
+                                <button class="icon-btn"><i class="fa-solid fa-ellipsis"></i></button>
+                            </div>
+                            <div class="card-body">
+                                <ul class="activity-list">
+                                    <li>
+                                        <div class="activity-icon" style="background-image: url('img/aradhya.jpg.jpeg'); background-size: cover; border-radius: 50%;"></div>
+                                        <div class="activity-info">
+                                            <h4>Aradhya Arya</h4>
+                                            <p>Community Head</p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="activity-icon" style="background-image: url('img/p1.png'); background-size: cover; border-radius: 50%;"></div>
+                                        <div class="activity-info">
+                                            <h4>Zula Prajapati</h4>
+                                            <p>Community Head</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Event Modal -->
+    <div class="modal" id="createEventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Event</h2>
+                <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="createEventForm">
+                <div class="form-group">
+                    <label for="eventTitle">Event Title</label>
+                    <input type="text" id="eventTitle" placeholder="e.g. UI/UX Masterclass" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventDate">Date & Time</label>
+                    <input type="datetime-local" id="eventDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventLocation">Location</label>
+                    <select id="eventLocation">
+                        <option value="virtual">Virtual (Zoom/Meet)</option>
+                        <option value="in_person">In Person</option>
+                        <option value="hybrid">Hybrid</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="eventDesc">Description</label>
+                    <textarea id="eventDesc" placeholder="What is this event about?"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary close-modal-btn">Cancel</button>
+                    <button type="submit" class="primary-btn">Create Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Resource Modal -->
+    <div class="modal" id="addResourceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Resource</h2>
+                <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="addResourceForm">
+                <div class="form-group">
+                    <label for="resourceTitle">Resource Title</label>
+                    <input type="text" id="resourceTitle" placeholder="e.g. Design System Guide" required>
+                </div>
+                <div class="form-group">
+                    <label for="resourceType">Resource Type</label>
+                    <select id="resourceType">
+                        <option value="pdf">PDF / Document</option>
+                        <option value="figma">Figma File</option>
+                        <option value="video">Video Tutorial</option>
+                        <option value="article">Article / Link</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="resourceFile">Upload File or URL</label>
+                    <input type="text" id="resourceFile" placeholder="Enter URL or drop file here">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary close-modal-btn">Cancel</button>
+                    <button type="submit" class="primary-btn">Add Resource</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Team Member Modal -->
+    <div class="modal" id="addTeamMemberModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Team Member</h2>
+                <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="addTeamMemberForm">
+                <div class="form-group">
+                    <label for="memberName">Full Name</label>
+                    <input type="text" id="memberName" placeholder="e.g. John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label for="memberRole">Role</label>
+                    <input type="text" id="memberRole" placeholder="e.g. Community Head" required>
+                </div>
+                <div class="form-group">
+                    <label for="memberLinkedin">LinkedIn URL</label>
+                    <input type="url" id="memberLinkedin" placeholder="https://linkedin.com/in/..." required>
+                </div>
+                <div class="form-group">
+                    <label for="memberPhoto">Profile Photo</label>
+                    <input type="file" id="memberPhoto" accept="image/*" style="padding: 9px 16px;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary close-modal-btn">Cancel</button>
+                    <button type="submit" class="primary-btn">Add Member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
