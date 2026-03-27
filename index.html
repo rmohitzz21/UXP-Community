@@ -3,7 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UX Pacific Community</title>
+    <meta name="description" content="UX Pacific Community - A space for designers, developers, and creators to collaborate on real projects, share resources, and grow together." />
+    <meta name="keywords" content="UX design, UI design, design community, collaboration, designers, developers" />
+    <meta name="author" content="UX Pacific" />
+    <meta name="theme-color" content="#6147bd" />
+    <title>UX Pacific Community | Design & Development Hub</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="img/slogo.png" />
+
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 
     <!-- Bootstrap 5 CSS -->
     <link
@@ -11,18 +23,18 @@
       rel="stylesheet"
     />
 
-    <!-- Google Font -->
+    <!-- Google Fonts - Gabarito for headings -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
    <link rel="stylesheet" href="./css/style.css">
   </head>
 
   <body class="main">
+    <!-- Skip to main content link for accessibility -->
+    <a href="#home" class="skip-link">Skip to main content</a>
     <!-- NAVBAR -->
     <div class="hero-shapes">
         <div class="hero-shape hero-shape-1"></div>
@@ -40,8 +52,11 @@
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#navMenu"
+            aria-controls="navMenu"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
           >
-            ☰
+            <span class="navbar-toggler-icon">☰</span>
           </button>
 
           <div
@@ -82,9 +97,8 @@
           <!-- Text Content -->
           <div class="col-lg-6 hero-content">
             <div class="hero-badge">
-              <!-- this icon can be spin 360 degree -->
-              <span class="badge-icon" >
-                <img src="img/star.png" alt="" height="15px" width="15px">
+              <span class="badge-icon" aria-hidden="true">
+                <img src="img/star.png" alt="" height="15" width="15" loading="eager">
               </span> 
               <span>Welcome to the Future of Collaboration</span>
             </div>
@@ -198,7 +212,7 @@
           <div class="col-lg-3 col-md-6">
             <div class="about-card">
               <div class="icon-box">
-                <img src="img/paint.png" alt="" srcset="">
+                <img src="img/paint.png" alt="Design icon" loading="lazy">
               </div>
               <h4>Design First</h4>
               <p>Beautiful, functional experiences that users love</p>
@@ -209,7 +223,7 @@
           <div class="col-lg-3 col-md-6">
             <div class="about-card">
               <div class="icon-box">
-                <img src="img/ar.png" alt="" srcset="">
+                <img src="img/ar.png" alt="Code icon" loading="lazy">
               </div>
               <h4>Code Excellence</h4>
               <p>Clean, scalable solutions built to last</p>
@@ -220,7 +234,7 @@
           <div class="col-lg-3 col-md-6">
             <div class="about-card">
               <div class="icon-box">
-                <img src="img/id.png" alt="" srcset="">
+                <img src="img/id.png" alt="Innovation icon" loading="lazy">
               </div>
               <h4>Innovation</h4>
               <p>Pushing boundaries and exploring new possibilities</p>
@@ -231,7 +245,7 @@
           <div class="col-lg-3 col-md-6">
             <div class="about-card">
               <div class="icon-box">
-                <img src="img/l.png" alt="" srcset="">
+                <img src="img/l.png" alt="Community icon" loading="lazy">
               </div>
               <h4>Community</h4>
               <p>Supporting and growing together as one</p>
@@ -268,11 +282,11 @@
                 </div>
 
                 <div class="team-social-v3">
-                   <a href="#" class="social-icon-box" aria-label="LinkedIn">
-                    <img src="img/linked.svg" alt="" srcset="" height="32" width="32">
+                   <a href="#" class="social-icon-box" aria-label="Visit Aradhya's LinkedIn profile">
+                    <img src="img/linked.svg" alt="LinkedIn" height="32" width="32" loading="lazy">
                    </a>
-                   <a href="#" class="social-icon-box" aria-label="Behance">
-                    <img src="img/behn.svg" alt="" srcset="" height="32" width="32">
+                   <a href="#" class="social-icon-box" aria-label="Visit Aradhya's Behance profile">
+                    <img src="img/behn.svg" alt="Behance" height="32" width="32" loading="lazy">
                   </a>
                 </div>
               </div>
@@ -430,19 +444,19 @@
         </p>
 
         <!-- Filter Pills -->
-        <div class="resource-filters mt-4">
-          <button class="filter-btn active">All</button>
-          <button class="filter-btn">Design</button>
-          <button class="filter-btn">Development</button>
-          <button class="filter-btn">Strategy</button>
+        <div class="resource-filters mt-4" role="tablist" aria-label="Filter resources">
+          <button class="filter-btn active" role="tab" aria-selected="true" data-filter="all">All</button>
+          <button class="filter-btn" role="tab" aria-selected="false" data-filter="design">Design</button>
+          <button class="filter-btn" role="tab" aria-selected="false" data-filter="development">Development</button>
+          <button class="filter-btn" role="tab" aria-selected="false" data-filter="strategy">Strategy</button>
         </div>
 
         <!-- Resource Cards -->
         <div class="row g-4 mt-5">
           <!-- Card 1 -->
           <div class="col-lg-3 col-md-6">
-            <div class="resource-card">
-              <img src="img/et.png" alt="UX Booklets" />
+            <article class="resource-card">
+              <img src="img/et.png" alt="UX Booklets preview" loading="lazy" />
               <span class="resource-tag">Booklet</span>
 
               <div class="resource-body">
@@ -451,15 +465,15 @@
                   Explore our 10-series UX Booklet collection covering
                   everything from research to usability testing.
                 </p>
-                <a href="#" class="resource-link">View Booklets →</a>
+                <a href="#" class="resource-link">View Booklets <span aria-hidden="true">→</span></a>
               </div>
-            </div>
+            </article>
           </div>
 
           <!-- Card 2 -->
           <div class="col-lg-3 col-md-6">
-            <div class="resource-card">
-              <img src="img/et.png" alt="AI/ML Article" />
+            <article class="resource-card">
+              <img src="img/et.png" alt="AI/ML Article preview" loading="lazy" />
               <span class="resource-tag">Articles</span>
 
               <div class="resource-body">
@@ -468,15 +482,15 @@
                   Read stories, tips, and insights from our design community.
                   Stay updated with the latest UX trends.
                 </p>
-                <a href="#" class="resource-link">Read Articles →</a>
+                <a href="#" class="resource-link">Read Articles <span aria-hidden="true">→</span></a>
               </div>
-            </div>
+            </article>
           </div>
 
           <!-- Card 3 -->
           <div class="col-lg-3 col-md-6">
-            <div class="resource-card">
-              <img src="img/et.png" alt="Badges" />
+            <article class="resource-card">
+              <img src="img/et.png" alt="UXPacific Badges preview" loading="lazy" />
               <span class="resource-tag">Merchandise</span>
 
               <div class="resource-body">
@@ -485,15 +499,15 @@
                   Wear your creativity! Explore UXPacific T-shirts, badges,
                   stickers, and accessories.
                 </p>
-                <a href="#" class="resource-link">Go to Store →</a>
+                <a href="#" class="resource-link">Go to Store <span aria-hidden="true">→</span></a>
               </div>
-            </div>
+            </article>
           </div>
 
           <!-- Card 4 -->
           <div class="col-lg-3 col-md-6">
-            <div class="resource-card">
-              <img src="img/et.png" alt="Case Studies" />
+            <article class="resource-card">
+              <img src="img/et.png" alt="Case Studies preview" loading="lazy" />
               <span class="resource-tag">Case Studies</span>
 
               <div class="resource-body">
@@ -502,9 +516,9 @@
                   Dive into real design projects, UX challenges, and research
                   stories crafted by our community.
                 </p>
-                <a href="#" class="resource-link">Read More →</a>
+                <a href="#" class="resource-link">Read More <span aria-hidden="true">→</span></a>
               </div>
-            </div>
+            </article>
           </div>
         </div>
       </div>

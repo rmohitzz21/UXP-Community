@@ -3,7 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UX Pacific</title>
+    <meta name="description" content="Contact UX Pacific Community - Get in touch with our design team for collaborations, projects, or inquiries." />
+    <meta name="theme-color" content="#6147bd" />
+    <title>Contact Us | UX Pacific Community</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="img/LOGO.png" />
+
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 
     <!-- Bootstrap 5 CSS -->
     <link
@@ -11,24 +21,25 @@
       rel="stylesheet"
     />
 
-    <!-- Google Font -->
+    <!-- Google Fonts -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <link rel="stylesheet" href="./css/style.css" />
   </head>
 
   <body class="main">
+    <!-- Skip to main content link -->
+    <a href="#contact" class="skip-link">Skip to main content</a>
+
     <!-- NAVBAR -->
-     <nav class="navbar navbar-expand-lg fixed-top mt-3">
+     <nav class="navbar navbar-expand-lg fixed-top mt-3" role="navigation" aria-label="Main navigation">
       <div class="container">
         <div class="navbar-glass w-100 d-flex align-items-center flex-wrap">
-          <a class="navbar-brand text-white" href="#">
-            <img src="img/LOGO.png" alt="UX Pacific Logo" class="navbar-logo" />
+          <a class="navbar-brand text-white" href="index.html">
+            <img src="img/5.png" alt="UX Pacific Logo" class="navbar-logo" />
           </a>
 
           <button
@@ -36,8 +47,11 @@
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#navMenu"
+            aria-controls="navMenu"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
           >
-            ☰
+            <span class="navbar-toggler-icon">☰</span>
           </button>
 
           <div
@@ -46,7 +60,7 @@
           >
             <ul class="navbar-nav gap-2">
               <li class="nav-item">
-                <a class="nav-link " href="index.html">Home</a>
+                <a class="nav-link" href="index.html">Home</a>
               </li> 
               <li class="nav-item">
                 <a class="nav-link" href="index.html#about-section">About Us</a>
@@ -57,13 +71,13 @@
               <li class="nav-item"><a class="nav-link" href="index.html#event-section">Event</a></li>
               <!-- Mobile Contact Button -->
               <li class="nav-item d-lg-none mt-3">
-                <a href="contact.html" class="btn btn-primary-gradient w-100">Contact Us</a>
+                <a href="contact.html" class="btn btn-primary-gradient w-100" aria-current="page">Contact Us</a>
               </li>
             </ul>
           </div>
 
           <div class="d-none d-lg-block">
-            <a href="contact.html" class="btn btn-primary-gradient">Contact Us</a>
+            <a href="contact.html" class="btn btn-primary-gradient" aria-current="page">Contact Us</a>
           </div>
         </div>
       </div>
@@ -71,12 +85,12 @@
 
 
       <main id="home" class="main">
-        <section id="contact" class="contact-section">
+        <section id="contact" class="contact-section" aria-labelledby="contact-title">
 
-            <div class="contact-grid">
+                <div class="contact-grid">
                 <!-- LEFT: Info panel -->
                 <div class="contact-info-panel">
-                    <h2 class="contact-title">Connect <span class="contact-title-gradient">With Us</span></h2>
+                    <h2 id="contact-title" class="contact-title">Connect <span class="contact-title-gradient">With Us</span></h2>
                     <p class="contact-subtitle">
                         Whether you’re a startup with a big idea, an enterprise looking to level up
                         your UX, or a designer wanting to collaborate we’re here for all of it.
@@ -135,22 +149,22 @@
                 </div>
 
                 <!-- RIGHT: Form -->
-                <form class="contact-form" action="#" method="post">
+                <form class="contact-form" action="#" method="post" novalidate>
                     <div class="contact-row">
                         <div class="contact-field">
-                            <label for="name">Name</label>
-                            <input id="name" name="name" type="text" placeholder="Enter your name here">
+                            <label for="name">Name <span class="visually-hidden">(required)</span></label>
+                            <input id="name" name="name" type="text" placeholder="Enter your name here" required autocomplete="name">
                         </div>
                         <div class="contact-field">
-                            <label for="email">Email</label>
-                            <input id="email" name="email" type="email" placeholder="Enter your email address">
+                            <label for="email">Email <span class="visually-hidden">(required)</span></label>
+                            <input id="email" name="email" type="email" placeholder="Enter your email address" required autocomplete="email">
                         </div>
                     </div>
 
                     <div class="contact-row">
                         <div class="contact-field">
                             <label for="phone">Phone Number</label>
-                            <input id="phone" name="phone" type="tel" placeholder="+91 xxxxx-xxxxx">
+                            <input id="phone" name="phone" type="tel" placeholder="+91 xxxxx-xxxxx" autocomplete="tel">
                         </div>
                         <div class="contact-field">
                             <label for="industry">Industry</label>
@@ -168,15 +182,15 @@
                     </div>
 
                     <div class="contact-field">
-                        <label for="message">Message</label>
+                        <label for="message">Message <span class="visually-hidden">(required)</span></label>
                         <textarea id="message" name="message" rows="5"
-                            placeholder="Enter your message here..."></textarea>
+                            placeholder="Enter your message here..." required></textarea>
                     </div>
 
                     <div class="contact-footer">
                         <label class="contact-checkbox">
-                            <input type="checkbox">
-                            <span>
+                            <input type="checkbox" required aria-describedby="terms-desc">
+                            <span id="terms-desc">
                                 I Agree to
                                 <a href="#" class="contact-link">Terms &amp; Conditions</a>
                                 of UX Pacific

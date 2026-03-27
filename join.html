@@ -3,7 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Join UX Pacific Community</title>
+    <meta name="description" content="Join UX Pacific Community - Connect with designers, developers, and creators. Get your invite link to join our growing design community." />
+    <meta name="theme-color" content="#6147bd" />
+    <title>Join Our Community | UX Pacific</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="img/LOGO.png" />
+
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 
     <!-- Bootstrap 5 CSS -->
     <link
@@ -11,13 +21,11 @@
       rel="stylesheet"
     />
 
-    <!-- Google Font -->
+    <!-- Google Fonts -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -27,12 +35,15 @@
   </head>
 
   <body class="main">
+    <!-- Skip to main content link -->
+    <a href="#join-section" class="skip-link">Skip to main content</a>
+
     <!-- NAVBAR -->
-       <nav class="navbar navbar-expand-lg fixed-top mt-3">
+       <nav class="navbar navbar-expand-lg fixed-top mt-3" role="navigation" aria-label="Main navigation">
       <div class="container">
         <div class="navbar-glass w-100 d-flex align-items-center flex-wrap">
           <a class="navbar-brand text-white" href="index.html">
-            <img src="img/LOGO.png" alt="UX Pacific Logo" class="navbar-logo" />
+            <img src="img/logo1.webp" alt="UX Pacific Logo" class="navbar-logo" />
           </a>
 
           <button
@@ -40,8 +51,11 @@
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#navMenu"
+            aria-controls="navMenu"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
           >
-            ☰
+            <span class="navbar-toggler-icon">☰</span>
           </button>
 
           <div
@@ -75,19 +89,20 @@
 
     <main class="main">
       <!-- JOIN SECTION -->
-      <section class="join-section">
+      <section class="join-section" id="join-section" aria-labelledby="join-title">
         <div class="container text-center">
-          <h1 class="join-main-title">Join the <span>UXPacific</span><br>Community</h1>
+          <h1 id="join-title" class="join-main-title">Join the <span>UXPacific</span><br>Community</h1>
           <p class="join-main-subtitle">
             Enter your email address to receive the community invite link directly to your inbox.<br>
             Join us to connect, share, and grow.
           </p>
           <div class="share-ideas-card">
-            <form class="join-form">
+            <form class="join-form" action="#" method="post" novalidate>
               <div class="input-group-wrapper">
-                <input type="email" class="form-control join-input" placeholder="Enter your email address" aria-label="Email" required>
-                <button class="btn btn-primary-gradient join-btn" type="submit">
-                  <i class="bi bi-arrow-right-short"></i>
+                <label for="join-email" class="visually-hidden">Email address</label>
+                <input type="email" id="join-email" name="email" class="form-control join-input" placeholder="Enter your email address" aria-label="Email address" required autocomplete="email">
+                <button class="btn btn-primary-gradient join-btn" type="submit" aria-label="Submit email to join">
+                  <i class="bi bi-arrow-right-short" aria-hidden="true"></i>
                 </button>
               </div>
             </form>
