@@ -159,4 +159,132 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+
+    // ===========================
+    // EVENT REGISTRATION MODAL
+    // ===========================
+    const eventRegisterModal = document.getElementById('eventRegisterModal');
+    const registrationForm = document.getElementById('eventRegistrationForm');
+    const registrationSuccessModal = document.getElementById('registrationSuccessModal');
+
+    // Update modal with event name when Register Now is clicked
+    if (eventRegisterModal) {
+        eventRegisterModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            if (button) {
+                const eventName = button.getAttribute('data-event-name');
+                const modalEventName = document.getElementById('modalEventName');
+                if (modalEventName && eventName) {
+                    modalEventName.textContent = eventName;
+                }
+            }
+        });
+
+        // Reset form when modal is closed
+        eventRegisterModal.addEventListener('hidden.bs.modal', function() {
+            if (registrationForm) {
+                registrationForm.reset();
+                // Remove validation classes
+                registrationForm.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            }
+        });
+    }
+
+    // Handle registration form submission
+    if (registrationForm) {
+        registrationForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Basic validation
+            const firstName = document.getElementById('regFirstName');
+            const lastName = document.getElementById('regLastName');
+            const email = document.getElementById('regEmail');
+            const phone = document.getElementById('regPhone');
+            const role = document.getElementById('regRole');
+            const terms = document.getElementById('regTerms');
+            
+            let isValid = true;
+            
+            // Validate required fields
+            [firstName, lastName, email, phone, role].forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    field.style.borderColor = '#ef4444';
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                    field.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                }
+            });
+
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email.value && !emailRegex.test(email.value)) {
+                email.classList.add('is-invalid');
+                email.style.borderColor = '#ef4444';
+                isValid = false;
+            }
+
+            // Validate terms checkbox
+            if (!terms.checked) {
+                terms.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                terms.classList.remove('is-invalid');
+            }
+
+            if (!isValid) {
+                return;
+            }
+
+            // Collect form data
+            const formData = {
+                firstName: firstName.value.trim(),
+                lastName: lastName.value.trim(),
+                email: email.value.trim(),
+                phone: phone.value.trim(),
+                company: document.getElementById('regCompany').value.trim(),
+                role: role.value,
+                experience: document.getElementById('regExperience').value,
+                expectations: document.getElementById('regExpectations').value.trim(),
+                updates: document.getElementById('regUpdates').checked,
+                eventName: document.getElementById('modalEventName').textContent,
+                registeredAt: new Date().toISOString()
+            };
+
+            // Store registration in localStorage (for demo/admin viewing)
+            let registrations = JSON.parse(localStorage.getItem('eventRegistrations') || '[]');
+            formData.id = 'REG-' + Date.now();
+            registrations.push(formData);
+            localStorage.setItem('eventRegistrations', JSON.stringify(registrations));
+
+            console.log('Registration submitted:', formData);
+
+            // Close registration modal and show success modal
+            const bsRegisterModal = bootstrap.Modal.getInstance(eventRegisterModal);
+            bsRegisterModal.hide();
+
+            // Show success modal after a brief delay
+            setTimeout(() => {
+                const successModal = new bootstrap.Modal(registrationSuccessModal);
+                successModal.show();
+            }, 300);
+        });
+    }
+
+    // Style invalid inputs on focus
+    document.querySelectorAll('#eventRegistrationForm input, #eventRegistrationForm select, #eventRegistrationForm textarea').forEach(field => {
+        field.addEventListener('focus', function() {
+            if (this.classList.contains('is-invalid')) {
+                this.style.borderColor = '#ef4444';
+            } else {
+                this.style.borderColor = '#7b61ff';
+            }
+        });
+        field.addEventListener('blur', function() {
+            if (!this.classList.contains('is-invalid')) {
+                this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            }
+        });
+    });
 });

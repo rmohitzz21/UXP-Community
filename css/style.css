@@ -8,6 +8,35 @@
                     --transition-base: 0.3s ease;
                   }
 
+                  /* Fix dropdown/select options for dark theme */
+                  .form-select,
+                  .form-control,
+                  select {
+                    background-color: rgba(255, 255, 255, 0.05) !important;
+                    color: #fff !important;
+                  }
+
+                  .form-select option,
+                  select option {
+                    background-color: #1a1a2e !important;
+                    color: #fff !important;
+                    padding: 10px;
+                  }
+
+                  .form-select option:hover,
+                  .form-select option:checked,
+                  select option:hover,
+                  select option:checked {
+                    background-color: #7b61ff !important;
+                    color: #fff !important;
+                  }
+
+                  /* Contact form select styling */
+                  .contact-select option {
+                    background-color: #1a1a2e !important;
+                    color: #fff !important;
+                  }
+
                   /* Smooth scrolling for better UX */
                   html {
                     scroll-behavior: smooth;
