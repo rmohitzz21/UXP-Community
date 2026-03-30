@@ -1,3 +1,99 @@
+<?php
+require_once __DIR__ . '/includes/db.php';
+
+$message = '';
+$messageType = '';
+$ideas = [];
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $title = trim($_POST['title'] ?? '');
+    $description = trim($_POST['description'] ?? '');
+    
+    // Validation
+    $errors = [];
+    
+    if (empty($name) || strlen($name) < 2) {
+        $errors[] = 'Name is required (min 2 characters).';
+    }
+    
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = 'Valid email is required.';
+    }
+    
+    if (empty($title) || strlen($title) < 5) {
+        $errors[] = 'Title is required (min 5 characters).';
+    }
+    
+    if (empty($description) || strlen($description) < 20) {
+        $errors[] = 'Description is required (min 20 characters).';
+    }
+    
+    // Handle image upload
+    $imagePath = null;
+    if (isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
+        $uploadResult = uploadImage($_FILES['image'], 'uploads/ideas/');
+        if (!$uploadResult['success']) {
+            $errors[] = $uploadResult['error'];
+        } else {
+            $imagePath = $uploadResult['filename'];
+        }
+    }
+    
+    if (empty($errors)) {
+        try {
+            $pdo = getDB();
+            $stmt = $pdo->prepare("
+                INSERT INTO ideas (name, email, title, description, image) 
+                VALUES (:name, :email, :title, :description, :image)
+            ");
+            $stmt->execute([
+                ':name' => $name,
+                ':email' => $email,
+                ':title' => $title,
+                ':description' => $description,
+                ':image' => $imagePath
+            ]);
+            
+            $message = 'Your idea has been submitted successfully! We\'ll review it soon.';
+            $messageType = 'success';
+            
+            // Clear form
+            $_POST = [];
+        } catch (PDOException $e) {
+            error_log("Idea submission error: " . $e->getMessage());
+            $message = 'An error occurred. Please try again later.';
+            $messageType = 'danger';
+            
+            // Delete uploaded image if DB insert failed
+            if ($imagePath) {
+                deleteUploadedFile($imagePath);
+            }
+        }
+    } else {
+        $message = implode('<br>', $errors);
+        $messageType = 'danger';
+    }
+}
+
+// Fetch approved ideas for display
+try {
+    $pdo = getDB();
+    $stmt = $pdo->query("
+        SELECT id, name, title, description, image, created_at 
+        FROM ideas 
+        WHERE status = 'approved' 
+        ORDER BY created_at DESC 
+        LIMIT 20
+    ");
+    $ideas = $stmt->fetchAll();
+} catch (PDOException $e) {
+    error_log("Fetch ideas error: " . $e->getMessage());
+    $ideas = [];
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -28,7 +124,7 @@
                 /* Specific overrides for Idea Page */
                 .idea-section {
                         padding: 140px 0 80px;
-                        min-height: 80vh;
+                        min-height: auto;
                         display: flex;
                         align-items: center;
                         justify-content: center;
@@ -86,6 +182,99 @@
                         }
                 }
 
+                /* Ideas Display Grid */
+                .ideas-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                        gap: 24px;
+                        margin-top: 40px;
+                }
+                
+                .idea-item {
+                        background: linear-gradient(180deg, rgba(30, 30, 40, 0.6), rgba(15, 15, 25, 0.8));
+                        border: 1px solid rgba(255, 255, 255, 0.08);
+                        border-radius: 20px;
+                        padding: 24px;
+                        transition: transform 0.3s ease, box-shadow 0.3s ease;
+                }
+                
+                .idea-item:hover {
+                        transform: translateY(-4px);
+                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+                }
+                
+                .idea-item-image {
+                        width: 100%;
+                        height: 180px;
+                        object-fit: cover;
+                        border-radius: 12px;
+                        margin-bottom: 16px;
+                }
+                
+                .idea-item h4 {
+                        color: #fff;
+                        font-size: 1.25rem;
+                        margin-bottom: 8px;
+                }
+                
+                .idea-item p {
+                        color: rgba(255, 255, 255, 0.7);
+                        font-size: 0.95rem;
+                        line-height: 1.6;
+                }
+                
+                .idea-meta {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-top: 16px;
+                        padding-top: 16px;
+                        border-top: 1px solid rgba(255, 255, 255, 0.1);
+                }
+                
+                .idea-author {
+                        color: #7b61ff;
+                        font-weight: 500;
+                }
+                
+                .idea-date {
+                        color: rgba(255, 255, 255, 0.5);
+                        font-size: 0.85rem;
+                }
+
+                /* File Input Styling */
+                .file-input-wrapper {
+                        position: relative;
+                        overflow: hidden;
+                }
+                
+                .file-input-wrapper input[type=file] {
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        opacity: 0;
+                        cursor: pointer;
+                        width: 100%;
+                        height: 100%;
+                }
+                
+                .file-input-label {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        padding: 16px 20px;
+                        background: linear-gradient(#121212, #121212) padding-box, linear-gradient(to right, #ffffff 0%, #2e2e3e 100%) border-box;
+                        border: 2px dashed rgba(255, 255, 255, 0.2);
+                        border-radius: 6px;
+                        color: rgba(255, 255, 255, 0.6);
+                        cursor: pointer;
+                        transition: border-color 0.3s;
+                }
+                
+                .file-input-label:hover {
+                        border-color: #7b61ff;
+                }
+
                 /* Success Animation Styles */
                 .success-checkmark-anim {
                         width: 80px;
@@ -129,6 +318,13 @@
                 @keyframes pop-in {
                         0% { transform: scale(0); opacity: 0; }
                         100% { transform: scale(1); opacity: 1; }
+                }
+                
+                /* Alert styling */
+                .alert-custom {
+                        border-radius: 12px;
+                        padding: 16px 20px;
+                        margin-bottom: 20px;
                 }
         </style>
     </head>
@@ -190,35 +386,49 @@
                         If it aligns with the community, we'd love to build it together.
                     </p>
 
+                    <?php if ($message): ?>
+                    <div class="alert alert-<?php echo $messageType; ?> alert-custom" role="alert">
+                        <?php echo $message; ?>
+                    </div>
+                    <?php endif; ?>
+
                     <!-- FORM CONTAINER -->
                     <div class="idea-card" id="idea-card-container">
-                        <form class="idea-form" onsubmit="handleIdeaPageSubmit(event)">
+                        <form class="idea-form" method="POST" enctype="multipart/form-data">
                             <div class="contact-row">
                                 <div class="contact-field">
-                                    <input type="text" placeholder="Your Name" required>
+                                    <input type="text" name="name" placeholder="Your Name" 
+                                           value="<?php echo h($_POST['name'] ?? ''); ?>" required>
                                 </div>
                                 <div class="contact-field">
-                                    <input type="email" placeholder="Your Email" required>
+                                    <input type="email" name="email" placeholder="Your Email" 
+                                           value="<?php echo h($_POST['email'] ?? ''); ?>" required>
                                 </div>
                             </div>
 
                             <div class="contact-field mt-3">
-                                <textarea rows="5" placeholder="Share your idea / proposal..." required></textarea>
+                                <input type="text" name="title" placeholder="Idea Title" 
+                                       value="<?php echo h($_POST['title'] ?? ''); ?>" required>
+                            </div>
+
+                            <div class="contact-field mt-3">
+                                <textarea name="description" rows="5" placeholder="Describe your idea in detail..." required><?php echo h($_POST['description'] ?? ''); ?></textarea>
+                            </div>
+
+                            <div class="contact-field mt-3">
+                                <div class="file-input-wrapper">
+                                    <label class="file-input-label">
+                                        <i class="bi bi-cloud-upload"></i>
+                                        <span id="file-name">Upload an image (optional, max 5MB)</span>
+                                        <input type="file" name="image" accept="image/jpeg,image/png,image/gif,image/webp" onchange="updateFileName(this)">
+                                    </label>
+                                </div>
                             </div>
 
                             <button type="submit" class="btn btn-primary-gradient mt-4 px-5 py-3 rounded-pill fw-bold">
-                                Send my Idea
+                                Submit My Idea
                             </button>
                         </form>
-                    </div>
-
-                    <!-- SUCCESS MESSAGE container (Hidden by default) -->
-                    <div class="idea-card success-card" id="idea-success-msg" style="display: none;">
-                          <div class="success-checkmark-anim mb-3">
-                              <i class="bi bi-check-lg display-4"></i>
-                          </div>
-                          <h2 class="text-white fw-bold mb-2">Thanks!</h2>
-                          <p class="text-white-50 fs-5">One real human will read this!</p>
                     </div>
 
                     <!-- EXTRA INFO -->
@@ -227,6 +437,32 @@
                     </div>
                 </div>
             </section>
+
+            <!-- IDEAS DISPLAY SECTION -->
+            <?php if (!empty($ideas)): ?>
+            <section class="py-5">
+                <div class="container">
+                    <h2 class="text-white text-center mb-2">Community Ideas</h2>
+                    <p class="text-white-50 text-center mb-4">Check out what others are thinking</p>
+                    
+                    <div class="ideas-grid">
+                        <?php foreach ($ideas as $idea): ?>
+                        <div class="idea-item">
+                            <?php if ($idea['image']): ?>
+                            <img src="<?php echo h($idea['image']); ?>" alt="<?php echo h($idea['title']); ?>" class="idea-item-image">
+                            <?php endif; ?>
+                            <h4><?php echo h($idea['title']); ?></h4>
+                            <p><?php echo nl2br(h(substr($idea['description'], 0, 200))); ?><?php echo strlen($idea['description']) > 200 ? '...' : ''; ?></p>
+                            <div class="idea-meta">
+                                <span class="idea-author"><i class="bi bi-person-fill me-1"></i><?php echo h($idea['name']); ?></span>
+                                <span class="idea-date"><?php echo date('M d, Y', strtotime($idea['created_at'])); ?></span>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </section>
+            <?php endif; ?>
         </main>
 
         <!-- FOOTER -->
@@ -278,24 +514,13 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            function handleIdeaPageSubmit(e) {
-                e.preventDefault();
-                const card = document.getElementById('idea-card-container');
-                const success = document.getElementById('idea-success-msg');
-                
-                // Simple fade out/in effect
-                card.style.opacity = '0';
-                setTimeout(() => {
-                    card.style.display = 'none';
-                    success.style.display = 'block'; // block to show
-                    // trigger layout reflow
-                    void success.offsetWidth;
-                    
-                    // Add animation triggers
-                    success.classList.add('animate-trigger');
-                    
-                    success.style.opacity = '1';
-                }, 300);
+            function updateFileName(input) {
+                const label = document.getElementById('file-name');
+                if (input.files && input.files[0]) {
+                    label.textContent = input.files[0].name;
+                } else {
+                    label.textContent = 'Upload an image (optional, max 5MB)';
+                }
             }
         </script>
     </body>

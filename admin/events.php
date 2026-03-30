@@ -16,15 +16,22 @@
       <!-- SIDEBAR -->
       <aside class="admin-sidebar" id="sidebar">
         <div class="sidebar-header">
-          <img src="../img/LOGO.png" alt="UX Pacific" class="sidebar-logo" />
-          <span class="sidebar-brand">UX Pacific</span>
-          <button class="sidebar-close d-lg-none" id="closeSidebar"><i class="bi bi-x-lg"></i></button>
+          <img src="../img/LOGO.png" alt="UX Pacific" width="150" />
+          <button class="sidebar-close d-lg-none" id="closeSidebar">
+            <i class="bi bi-x-lg"></i>
+          </button>
         </div>
         <nav class="sidebar-nav">
           <ul class="nav-list">
             <li class="nav-item"><a href="index.php" class="nav-link"><i class="bi bi-grid-1x2-fill"></i><span>Dashboard</span></a></li>
             <li class="nav-item"><a href="contacts.php" class="nav-link"><i class="bi bi-envelope-fill"></i><span>Contact Messages</span></a></li>
             <li class="nav-item"><a href="members.php" class="nav-link"><i class="bi bi-people-fill"></i><span>Members</span></a></li>
+             <li class="nav-item">
+              <a href="ideas.php" class="nav-link">
+                <i class="bi bi-lightbulb-fill"></i>
+                <span>Ideas</span>
+              </a>
+            </li>
             <li class="nav-item"><a href="events.php" class="nav-link active"><i class="bi bi-calendar-event-fill"></i><span>Events</span></a></li>
             <li class="nav-item"><a href="registrations.php" class="nav-link"><i class="bi bi-person-check-fill"></i><span>Registrations</span></a></li>
             <li class="nav-item"><a href="resources.php" class="nav-link"><i class="bi bi-folder-fill"></i><span>Resources</span></a></li>

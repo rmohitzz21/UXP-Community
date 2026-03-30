@@ -63,6 +63,12 @@
               </a>
             </li>
             <li class="nav-item">
+              <a href="ideas.php" class="nav-link">
+                <i class="bi bi-lightbulb-fill"></i>
+                <span>Ideas</span>
+              </a>
+            </li>
+            <li class="nav-item">
               <a href="events.php" class="nav-link">
                 <i class="bi bi-calendar-event-fill"></i>
                 <span>Events</span>
