@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS ideas (
     INDEX idx_created (created_at DESC)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Contact messages table (for future use)
+-- Contact messages table
 CREATE TABLE IF NOT EXISTS contacts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS contacts (
     INDEX idx_created (created_at DESC)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Members/Join requests table (for future use)
+-- Members/Join requests table
 CREATE TABLE IF NOT EXISTS members (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -44,5 +44,39 @@ CREATE TABLE IF NOT EXISTS members (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_status (status),
+    INDEX idx_email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Events table
+CREATE TABLE IF NOT EXISTS events (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    event_type ENUM('Workshop', 'Masterclass', 'Meetup', 'Webinar') DEFAULT 'Workshop',
+    event_date DATE NOT NULL,
+    event_time TIME NOT NULL,
+    location VARCHAR(255),
+    max_registrations INT DEFAULT 100,
+    image VARCHAR(500) DEFAULT NULL,
+    status ENUM('active', 'draft', 'completed', 'cancelled') DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_status (status),
+    INDEX idx_date (event_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Event registrations table
+CREATE TABLE IF NOT EXISTS event_registrations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    event_id INT NOT NULL,
+    name VARCHAR(200) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(20) DEFAULT NULL,
+    company VARCHAR(255) DEFAULT NULL,
+    expectations TEXT DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_registration (event_id, email),
+    INDEX idx_event (event_id),
     INDEX idx_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -1,3 +1,85 @@
+<?php
+require_once __DIR__ . '/../includes/db.php';
+
+// Get dashboard stats
+$stats = [
+    'members' => 0,
+    'contacts' => 0,
+    'events' => 0,
+    'registrations' => 0,
+    'ideas' => 0,
+    'upcoming_events' => 0
+];
+
+try {
+    $pdo = getDB();
+    $stats['members'] = $pdo->query("SELECT COUNT(*) FROM members")->fetchColumn() ?: 0;
+    $stats['contacts'] = $pdo->query("SELECT COUNT(*) FROM contacts")->fetchColumn() ?: 0;
+    $stats['events'] = $pdo->query("SELECT COUNT(*) FROM events")->fetchColumn() ?: 0;
+    $stats['registrations'] = $pdo->query("SELECT COUNT(*) FROM event_registrations")->fetchColumn() ?: 0;
+    $stats['ideas'] = $pdo->query("SELECT COUNT(*) FROM ideas")->fetchColumn() ?: 0;
+    $stats['upcoming_events'] = $pdo->query("SELECT COUNT(*) FROM events WHERE event_date >= CURDATE() AND status = 'active'")->fetchColumn() ?: 0;
+} catch (PDOException $e) {
+    // Tables might not exist yet
+}
+
+// Get recent contacts
+$recentContacts = [];
+try {
+    $pdo = getDB();
+    $recentContacts = $pdo->query("SELECT * FROM contacts ORDER BY created_at DESC LIMIT 5")->fetchAll();
+} catch (PDOException $e) {
+    // Silently fail
+}
+
+// Get upcoming events
+$upcomingEvents = [];
+try {
+    $pdo = getDB();
+    $upcomingEvents = $pdo->query("
+        SELECT e.*, (SELECT COUNT(*) FROM event_registrations WHERE event_id = e.id) as reg_count 
+        FROM events e 
+        WHERE e.event_date >= CURDATE() AND e.status = 'active' 
+        ORDER BY e.event_date ASC 
+        LIMIT 3
+    ")->fetchAll();
+} catch (PDOException $e) {
+    // Silently fail
+}
+
+// Get recent members
+$recentMembers = [];
+try {
+    $pdo = getDB();
+    $recentMembers = $pdo->query("SELECT * FROM members ORDER BY created_at DESC LIMIT 4")->fetchAll();
+} catch (PDOException $e) {
+    // Silently fail
+}
+
+// Helper for initials
+function getInitials($name) {
+    $words = explode(' ', trim($name));
+    $initials = '';
+    foreach ($words as $word) {
+        if (!empty($word)) {
+            $initials .= strtoupper($word[0]);
+        }
+        if (strlen($initials) >= 2) break;
+    }
+    return $initials ?: 'U';
+}
+
+// Helper for relative time
+function timeAgo($datetime) {
+    $time = strtotime($datetime);
+    $diff = time() - $time;
+    if ($diff < 60) return 'Just now';
+    if ($diff < 3600) return floor($diff/60) . ' min ago';
+    if ($diff < 86400) return floor($diff/3600) . ' hours ago';
+    if ($diff < 172800) return 'Yesterday';
+    return date('M d', $time);
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -123,7 +205,9 @@
           <div class="topbar-actions">
             <button class="topbar-btn" aria-label="Notifications">
               <i class="bi bi-bell"></i>
-              <span class="badge">3</span>
+              <?php if ($stats['upcoming_events'] > 0): ?>
+              <span class="badge"><?php echo $stats['upcoming_events']; ?></span>
+              <?php endif; ?>
             </button>
 
             <div class="dropdown">
@@ -162,12 +246,9 @@
                 <i class="bi bi-people-fill"></i>
               </div>
               <div class="stat-info">
-                <h3>1,248</h3>
+                <h3><?php echo number_format($stats['members']); ?></h3>
                 <p>Total Members</p>
               </div>
-              <span class="stat-trend up">
-                <i class="bi bi-arrow-up"></i> 12%
-              </span>
             </div>
 
             <div class="stat-card">
@@ -175,12 +256,9 @@
                 <i class="bi bi-envelope-fill"></i>
               </div>
               <div class="stat-info">
-                <h3>56</h3>
-                <p>New Messages</p>
+                <h3><?php echo number_format($stats['contacts']); ?></h3>
+                <p>Contact Messages</p>
               </div>
-              <span class="stat-trend up">
-                <i class="bi bi-arrow-up"></i> 8%
-              </span>
             </div>
 
             <div class="stat-card">
@@ -188,25 +266,19 @@
                 <i class="bi bi-calendar-event-fill"></i>
               </div>
               <div class="stat-info">
-                <h3>12</h3>
+                <h3><?php echo number_format($stats['upcoming_events']); ?></h3>
                 <p>Upcoming Events</p>
               </div>
-              <span class="stat-trend down">
-                <i class="bi bi-arrow-down"></i> 3%
-              </span>
             </div>
 
             <div class="stat-card">
               <div class="stat-icon bg-info">
-                <i class="bi bi-eye-fill"></i>
+                <i class="bi bi-person-check-fill"></i>
               </div>
               <div class="stat-info">
-                <h3>8.4K</h3>
-                <p>Page Views</p>
+                <h3><?php echo number_format($stats['registrations']); ?></h3>
+                <p>Event Registrations</p>
               </div>
-              <span class="stat-trend up">
-                <i class="bi bi-arrow-up"></i> 24%
-              </span>
             </div>
           </div>
 
@@ -230,7 +302,6 @@
                           <th>Email</th>
                           <th>Industry</th>
                           <th>Date</th>
-                          <th>Status</th>
                           <th>Action</th>
                         </tr>
                       </thead>

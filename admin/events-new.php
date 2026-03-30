@@ -4,26 +4,9 @@ require_once __DIR__ . '/../includes/db.php';
 $message = '';
 $messageType = '';
 $editEvent = null;
-$dbError = false;
-
-// Check database connection and tables exist
-try {
-    $pdo = getDB();
-    // Check if events table exists
-    $result = $pdo->query("SHOW TABLES LIKE 'events'");
-    if ($result->rowCount() === 0) {
-        $message = 'Database tables not found. Please run the setup.sql file in phpMyAdmin first.';
-        $messageType = 'warning';
-        $dbError = true;
-    }
-} catch (PDOException $e) {
-    $message = 'Database connection failed. Please check your database configuration.';
-    $messageType = 'danger';
-    $dbError = true;
-}
 
 // Handle Create Event
-if (!$dbError && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($_POST['action'] === 'create') {
         $title = trim($_POST['title'] ?? '');
         $description = trim($_POST['description'] ?? '');
@@ -72,7 +55,7 @@ if (!$dbError && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']
                 $messageType = 'success';
             } catch (PDOException $e) {
                 error_log("Create event error: " . $e->getMessage());
-                $message = 'Failed to create event: ' . $e->getMessage();
+                $message = 'Failed to create event.';
                 $messageType = 'danger';
             }
         } else {
@@ -153,7 +136,7 @@ if (!$dbError && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']
 }
 
 // Handle Delete
-if (!$dbError && isset($_GET['delete']) && is_numeric($_GET['delete'])) {
+if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
     $id = (int)$_GET['delete'];
     try {
         $pdo = getDB();
@@ -180,7 +163,7 @@ if (!$dbError && isset($_GET['delete']) && is_numeric($_GET['delete'])) {
 }
 
 // Handle Edit (load event data)
-if (!$dbError && isset($_GET['edit']) && is_numeric($_GET['edit'])) {
+if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
     $id = (int)$_GET['edit'];
     try {
         $pdo = getDB();
@@ -197,49 +180,45 @@ $events = [];
 $filter = $_GET['filter'] ?? 'all';
 $search = $_GET['search'] ?? '';
 
-if (!$dbError) {
-    try {
-        $pdo = getDB();
-        $sql = "SELECT e.*, 
-                (SELECT COUNT(*) FROM event_registrations WHERE event_id = e.id) as registration_count 
-                FROM events e WHERE 1=1";
-        $params = [];
-        
-        if ($filter === 'upcoming') {
-            $sql .= " AND e.event_date >= CURDATE() AND e.status = 'active'";
-        } elseif ($filter === 'past') {
-            $sql .= " AND (e.event_date < CURDATE() OR e.status = 'completed')";
-        } elseif ($filter === 'draft') {
-            $sql .= " AND e.status = 'draft'";
-        }
-        
-        if (!empty($search)) {
-            $sql .= " AND e.title LIKE :search";
-            $params[':search'] = '%' . $search . '%';
-        }
-        
-        $sql .= " ORDER BY e.event_date DESC";
-        
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute($params);
-        $events = $stmt->fetchAll();
-    } catch (PDOException $e) {
-        error_log("Fetch events error: " . $e->getMessage());
+try {
+    $pdo = getDB();
+    $sql = "SELECT e.*, 
+            (SELECT COUNT(*) FROM event_registrations WHERE event_id = e.id) as registration_count 
+            FROM events e WHERE 1=1";
+    $params = [];
+    
+    if ($filter === 'upcoming') {
+        $sql .= " AND e.event_date >= CURDATE() AND e.status = 'active'";
+    } elseif ($filter === 'past') {
+        $sql .= " AND (e.event_date < CURDATE() OR e.status = 'completed')";
+    } elseif ($filter === 'draft') {
+        $sql .= " AND e.status = 'draft'";
     }
+    
+    if (!empty($search)) {
+        $sql .= " AND e.title LIKE :search";
+        $params[':search'] = '%' . $search . '%';
+    }
+    
+    $sql .= " ORDER BY e.event_date DESC";
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    $events = $stmt->fetchAll();
+} catch (PDOException $e) {
+    error_log("Fetch events error: " . $e->getMessage());
 }
 
 // Get counts for stats
 $stats = ['total' => 0, 'upcoming' => 0, 'completed' => 0, 'registrations' => 0];
-if (!$dbError) {
-    try {
-        $pdo = getDB();
-        $stats['total'] = $pdo->query("SELECT COUNT(*) FROM events")->fetchColumn();
-        $stats['upcoming'] = $pdo->query("SELECT COUNT(*) FROM events WHERE event_date >= CURDATE() AND status = 'active'")->fetchColumn();
-        $stats['completed'] = $pdo->query("SELECT COUNT(*) FROM events WHERE event_date < CURDATE() OR status = 'completed'")->fetchColumn();
-        $stats['registrations'] = $pdo->query("SELECT COUNT(*) FROM event_registrations")->fetchColumn();
-    } catch (PDOException $e) {
-        // Silently fail
-    }
+try {
+    $pdo = getDB();
+    $stats['total'] = $pdo->query("SELECT COUNT(*) FROM events")->fetchColumn();
+    $stats['upcoming'] = $pdo->query("SELECT COUNT(*) FROM events WHERE event_date >= CURDATE() AND status = 'active'")->fetchColumn();
+    $stats['completed'] = $pdo->query("SELECT COUNT(*) FROM events WHERE event_date < CURDATE() OR status = 'completed'")->fetchColumn();
+    $stats['registrations'] = $pdo->query("SELECT COUNT(*) FROM event_registrations")->fetchColumn();
+} catch (PDOException $e) {
+    // Silently fail
 }
 ?>
 <!DOCTYPE html>
@@ -401,7 +380,7 @@ if (!$dbError) {
                         <h1><i class="bi bi-calendar-event-fill me-2"></i>Events</h1>
                         <p class="text-muted">Manage community events and workshops</p>
                     </div>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#eventModal" onclick="resetForm()" <?php echo $dbError ? 'disabled' : ''; ?>>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#eventModal" onclick="resetForm()">
                         <i class="bi bi-calendar-plus me-2"></i>Create Event
                     </button>
                 </div>
@@ -409,14 +388,6 @@ if (!$dbError) {
                 <?php if ($message): ?>
                 <div class="alert alert-<?php echo $messageType; ?> alert-dismissible fade show" role="alert">
                     <?php echo $message; ?>
-                    <?php if ($dbError): ?>
-                    <br><br>
-                    <strong>How to fix:</strong><br>
-                    1. Open phpMyAdmin (http://localhost/phpmyadmin)<br>
-                    2. Copy the SQL from <code>includes/setup.sql</code><br>
-                    3. Paste and run it in phpMyAdmin SQL tab<br>
-                    4. Refresh this page
-                    <?php endif; ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
                 <?php endif; ?>

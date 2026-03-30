@@ -1,3 +1,38 @@
+<?php
+require_once __DIR__ . '/includes/db.php';
+
+// Fetch upcoming events
+$upcomingEvents = [];
+$pastEvents = [];
+
+try {
+    $pdo = getDB();
+    
+    // Upcoming events
+    $stmt = $pdo->query("
+        SELECT e.*, 
+               (SELECT COUNT(*) FROM event_registrations WHERE event_id = e.id) as registration_count 
+        FROM events e 
+        WHERE e.event_date >= CURDATE() AND e.status = 'active' 
+        ORDER BY e.event_date ASC 
+        LIMIT 8
+    ");
+    $upcomingEvents = $stmt->fetchAll();
+    
+    // Past events
+    $stmt = $pdo->query("
+        SELECT e.*, 
+               (SELECT COUNT(*) FROM event_registrations WHERE event_id = e.id) as registration_count 
+        FROM events e 
+        WHERE e.event_date < CURDATE() OR e.status = 'completed' 
+        ORDER BY e.event_date DESC 
+        LIMIT 8
+    ");
+    $pastEvents = $stmt->fetchAll();
+} catch (PDOException $e) {
+    // Database not set up yet, use empty arrays
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -552,126 +587,46 @@
         <h3 class="events-subtitle">Upcoming Events</h3>
 
         <div class="events-grid">
-        <!-- Event Card -->
+        <?php if (empty($upcomingEvents)): ?>
+        <div class="text-center" style="grid-column: 1/-1; padding: 60px 20px;">
+          <p style="color: #a0a0b8; font-size: 1.1rem;">No upcoming events at the moment. Check back soon!</p>
+        </div>
+        <?php else: ?>
+        <?php foreach ($upcomingEvents as $event): ?>
         <article class="event-card">
           <span class="event-badge">Upcoming Event</span>
 
           <div class="event-img">
-            <img src="img/et.png" alt="Design Systems Summit" />
+            <?php if (!empty($event['image'])): ?>
+            <img src="<?php echo h($event['image']); ?>" alt="<?php echo h($event['title']); ?>" />
+            <?php else: ?>
+            <img src="img/et.png" alt="<?php echo h($event['title']); ?>" />
+            <?php endif; ?>
           </div>
 
           <div class="event-body">
-            <h4>Design Systems Summit 2026</h4>
+            <h4><?php echo h($event['title']); ?></h4>
             <p>
-              A 24-hour creative marathon where designers team up to build,
-              prototype, and share ideas using Figma.
+              <?php echo h(mb_strimwidth($event['description'] ?? 'Join us for this exciting event!', 0, 120, '...')); ?>
             </p>
 
             <ul class="event-meta">
               <li>
                 <img src="img/Icon.png" alt="" height="15px" width="15px">
-                 Nov 15, 2026 · 10:00 AM PST</li>
+                 <?php echo date('M d, Y', strtotime($event['event_date'])); ?> · <?php echo date('h:i A', strtotime($event['event_time'])); ?></li>
               <li>
                 <img src="img/Icon-1.png" alt="" height="15px" width="15px">
-                Virtual</li>
+                <?php echo h($event['location'] ?: 'Virtual'); ?></li>
               <li>
                 <img src="img/Icon-2.png" alt="" height="15px" width="15px">
-                500+ attendees</li>
+                <?php echo $event['registration_count']; ?>/<?php echo $event['max_registrations']; ?> registered</li>
             </ul>
 
-            <button type="button" class="btn-primary small full register-btn" data-bs-toggle="modal" data-bs-target="#eventRegisterModal" data-event-name="Design Systems Summit 2026">Register Now</button>
+            <a href="event-register.php?id=<?php echo $event['id']; ?>" class="btn-primary small full">Register Now</a>
           </div>
         </article>
-
-        <article class="event-card">
-          <span class="event-badge">Upcoming Event</span>
-
-          <div class="event-img">
-            <img src="img/et.png" alt="Design Systems Summit" />
-          </div>
-
-          <div class="event-body">
-            <h4>Design Systems Summit 2026</h4>
-            <p>
-              A 24-hour creative marathon where designers team up to build,
-              prototype, and share ideas using Figma.
-            </p>
-
-            <ul class="event-meta">
-              <li>
-                <img src="img/Icon.png" alt="" height="15px" width="15px">
-                 Nov 15, 2026 · 10:00 AM PST</li>
-              <li>
-                <img src="img/Icon-1.png" alt="" height="15px" width="15px">
-                Virtual</li>
-              <li>
-                <img src="img/Icon-2.png" alt="" height="15px" width="15px">
-                500+ attendees</li>
-            </ul>
-
-            <button type="button" class="btn-primary small full register-btn" data-bs-toggle="modal" data-bs-target="#eventRegisterModal" data-event-name="Design Systems Summit 2026">Register Now</button>
-          </div>
-        </article>
-
-        <article class="event-card">
-          <span class="event-badge">Upcoming Event</span>
-
-          <div class="event-img">
-            <img src="img/et.png" alt="Design Systems Summit" />
-          </div>
-
-          <div class="event-body">
-            <h4>Design Systems Summit 2026</h4>
-            <p>
-              A 24-hour creative marathon where designers team up to build,
-              prototype, and share ideas using Figma.
-            </p>
-
-            <ul class="event-meta">
-              <li>
-                <img src="img/Icon.png" alt="" height="15px" width="15px">
-                 Nov 15, 2026 · 10:00 AM PST</li>
-              <li>
-                <img src="img/Icon-1.png" alt="" height="15px" width="15px">
-                Virtual</li>
-              <li>
-                <img src="img/Icon-2.png" alt="" height="15px" width="15px">
-                500+ attendees</li>
-            </ul>
-
-            <button type="button" class="btn-primary small full register-btn" data-bs-toggle="modal" data-bs-target="#eventRegisterModal" data-event-name="Design Systems Summit 2026">Register Now</button>
-          </div>
-        </article>
-
-        <article class="event-card">
-          <span class="event-badge">Upcoming Event</span>
-
-          <div class="event-img">
-            <img src="img/et.png" alt="Design Systems Summit" />
-          </div>
-
-          <div class="event-body">
-            <h4>Design Systems Summit 2026</h4>
-            <p>
-              A 24-hour creative marathon where designers team up to build,
-              prototype, and share ideas using Figma.
-            </p>
-
-            <ul class="event-meta">
-              <li>
-                <img src="img/Icon.png" alt="" height="15px" width="15px">
-                 Nov 15, 2026 · 10:00 AM PST</li>
-              <li>
-                <img src="img/Icon-1.png" alt="" height="15px" width="15px">
-                Virtual</li>
-              <li>
-                <img src="img/Icon-2.png" alt="" height="15px" width="15px">
-                500+ attendees</li>
-            </ul>
-
-            <button type="button" class="btn-primary small full register-btn" data-bs-toggle="modal" data-bs-target="#eventRegisterModal" data-event-name="Design Systems Summit 2026">Register Now</button>
-          </div>
-        </article>
+        <?php endforeach; ?>
+        <?php endif; ?>
 
         <!-- Duplicate cards as needed -->
         </div>
@@ -682,110 +637,41 @@
         <h3 class="events-subtitle">Past Events</h3>
 
         <div class="events-grid">
+        <?php if (empty($pastEvents)): ?>
+        <div class="text-center" style="grid-column: 1/-1; padding: 60px 20px;">
+          <p style="color: #a0a0b8; font-size: 1.1rem;">No past events to show.</p>
+        </div>
+        <?php else: ?>
+        <?php foreach ($pastEvents as $event): ?>
         <article class="event-card past">
           <span class="event-badge muted">Past Event</span>
           <div class="event-img">
-            <img src="img/et.png" alt="Web3 Design Patterns" />
+            <?php if (!empty($event['image'])): ?>
+            <img src="<?php echo h($event['image']); ?>" alt="<?php echo h($event['title']); ?>" />
+            <?php else: ?>
+            <img src="img/et.png" alt="<?php echo h($event['title']); ?>" />
+            <?php endif; ?>
           </div>
           <div class="event-body">
-            <h4>Web3 Design Patterns</h4>
+            <h4><?php echo h($event['title']); ?></h4>
             <p>
-              A 24-hour creative marathon where designers team up to build,
-              prototype, and share ideas using Figma.
+              <?php echo h(mb_strimwidth($event['description'] ?? 'This event has concluded.', 0, 120, '...')); ?>
             </p>
             <ul class="event-meta">
               <li>
                 <img src="img/Icon.png" alt="" height="15px" width="15px">
-                 Nov 15, 2024 · 10:00 AM PST</li>
+                 <?php echo date('M d, Y', strtotime($event['event_date'])); ?> · <?php echo date('h:i A', strtotime($event['event_time'])); ?></li>
               <li>
                 <img src="img/Icon-1.png" alt="" height="15px" width="15px">
-                Virtual</li>
+                <?php echo h($event['location'] ?: 'Virtual'); ?></li>
               <li>
                 <img src="img/Icon-2.png" alt="" height="15px" width="15px">
-                800+ attended</li>
+                <?php echo $event['registration_count']; ?> attended</li>
             </ul>
-            <a href="#" class="btn-primary small full">Watch Replay</a>
           </div>
         </article>
-
-        <article class="event-card past">
-          <span class="event-badge muted">Past Event</span>
-
-          <div class="event-img">
-            <img src="img/et.png" alt="Web3 Design Patterns" />
-          </div>
-          <div class="event-body">
-            <h4>Web3 Design Patterns</h4>
-            <p>
-              A 24-hour creative marathon where designers team up to build,
-              prototype, and share ideas using Figma.
-            </p>
-            <ul class="event-meta">
-              <li>
-                <img src="img/Icon.png" alt="" height="15px" width="15px">
-                 Nov 15, 2024 · 10:00 AM PST</li>
-              <li>
-                <img src="img/Icon-1.png" alt="" height="15px" width="15px">
-                Virtual</li>
-              <li>
-                <img src="img/Icon-2.png" alt="" height="15px" width="15px">
-                800+ attended</li>
-            </ul>
-            <a href="#" class="btn-primary small full">Watch Replay</a>
-          </div>
-        </article>
-
-        <article class="event-card past">
-          <span class="event-badge muted">Past Event</span>
-          <div class="event-img">
-            <img src="img/et.png" alt="Web3 Design Patterns" />
-          </div>
-          <div class="event-body">
-            <h4>Web3 Design Patterns</h4>
-            <p>
-              A 24-hour creative marathon where designers team up to build,
-              prototype, and share ideas using Figma.
-            </p>
-            <ul class="event-meta">
-              <li>
-                <img src="img/Icon.png" alt="" height="15px" width="15px">
-                 Nov 15, 2024 · 10:00 AM PST</li>
-              <li>
-                <img src="img/Icon-1.png" alt="" height="15px" width="15px">
-                Virtual</li>
-              <li>
-                <img src="img/Icon-2.png" alt="" height="15px" width="15px">
-                800+ attended</li>
-            </ul>
-            <a href="#" class="btn-primary small full">Watch Replay</a>
-          </div>
-        </article>
-
-        <article class="event-card past">
-          <span class="event-badge muted">Past Event</span>
-          <div class="event-img">
-            <img src="img/et.png" alt="Web3 Design Patterns" />
-          </div>
-          <div class="event-body">
-            <h4>Web3 Design Patterns</h4>
-            <p>
-              A 24-hour creative marathon where designers team up to build,
-              prototype, and share ideas using Figma.
-            </p>
-            <ul class="event-meta">
-              <li>
-                <img src="img/Icon.png" alt="" height="15px" width="15px">  
-                 &nbsp; Nov 15, 2024 · 10:00 AM PST</li>
-              <li>
-                <img src="img/Icon-1.png" alt="" height="15px" width="15px">
-                Virtual</li>
-              <li>
-                <img src="img/Icon-2.png" alt="" height="15px" width="15px">
-                800+ attended</li>
-            </ul>
-            <a href="#" class="btn-primary small full">Watch Replay</a>
-          </div>
-        </article>
+        <?php endforeach; ?>
+        <?php endif; ?>
       </div>
       </div>
     </section>
