@@ -145,6 +145,12 @@ function timeAgo($datetime) {
               </a>
             </li>
             <li class="nav-item">
+              <a href="team.php" class="nav-link">
+                <i class="bi bi-person-badge-fill"></i>
+                <span>Team</span>
+              </a>
+            </li>
+            <li class="nav-item">
               <a href="ideas.php" class="nav-link">
                 <i class="bi bi-lightbulb-fill"></i>
                 <span>Ideas</span>

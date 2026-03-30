@@ -4,6 +4,7 @@ require_once __DIR__ . '/includes/db.php';
 // Fetch upcoming events
 $upcomingEvents = [];
 $pastEvents = [];
+$teamMembers = [];
 
 try {
     $pdo = getDB();
@@ -29,6 +30,15 @@ try {
         LIMIT 8
     ");
     $pastEvents = $stmt->fetchAll();
+    
+    // Team members
+    $stmt = $pdo->query("
+        SELECT * FROM team_members 
+        WHERE is_active = 1 
+        ORDER BY display_order ASC, created_at DESC 
+        LIMIT 12
+    ");
+    $teamMembers = $stmt->fetchAll();
 } catch (PDOException $e) {
     // Database not set up yet, use empty arrays
 }
@@ -303,162 +313,64 @@ try {
 
         <!-- Team Grid -->
         <div class="row g-4 mt-5">
-          <!-- Member 1: Aradhya Arya -->
+          <?php if (empty($teamMembers)): ?>
+          <!-- Fallback static content if no team members in database -->
           <div class="col-lg-3 col-md-6">
             <div class="team-card-v3">
               <div class="team-card-v3-img">
-                <img src="img/p1.png" alt="Aradhya Arya" />
+                <img src="img/p1.png" alt="Team Member" />
               </div>
-              
               <div class="team-card-v3-content">
                 <div class="team-info">
-                  <h5>Aradhya Arya</h5>
+                  <h5>Team Member</h5>
                   <span>Community Head</span>
                 </div>
-
                 <div class="team-social-v3">
-                   <a href="#" class="social-icon-box" aria-label="Visit Aradhya's LinkedIn profile">
+                  <a href="#" class="social-icon-box" aria-label="LinkedIn">
                     <img src="img/linked.svg" alt="LinkedIn" height="32" width="32" loading="lazy">
-                   </a>
-                   <a href="#" class="social-icon-box" aria-label="Visit Aradhya's Behance profile">
+                  </a>
+                  <a href="#" class="social-icon-box" aria-label="Behance">
                     <img src="img/behn.svg" alt="Behance" height="32" width="32" loading="lazy">
                   </a>
                 </div>
               </div>
             </div>
           </div>
-
-          <!-- Member 2: Zula Prajapati -->
+          <?php else: ?>
+          <?php foreach ($teamMembers as $member): ?>
           <div class="col-lg-3 col-md-6">
             <div class="team-card-v3">
               <div class="team-card-v3-img">
-                <img src="img/p1.png" alt="Zula Prajapati" />
+                <?php if ($member['image']): ?>
+                <img src="<?php echo h($member['image']); ?>" alt="<?php echo h($member['name']); ?>" />
+                <?php else: ?>
+                <img src="img/p1.png" alt="<?php echo h($member['name']); ?>" />
+                <?php endif; ?>
               </div>
-
+              
               <div class="team-card-v3-content">
                 <div class="team-info">
-                  <h5>Zula Prajapati</h5>
-                  <span>Community Head</span>
+                  <h5><?php echo h($member['name']); ?></h5>
+                  <span><?php echo h($member['role']); ?></span>
                 </div>
 
                 <div class="team-social-v3">
-                   <a href="#" class="social-icon-box" aria-label="LinkedIn">
-                    <img src="img/linked.svg" alt="" srcset="" height="32" width="32">
-                     <!-- <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> -->
-                   </a>
-                   <a href="#" class="social-icon-box" aria-label="Behance">
-                    <img src="img/behn.svg" alt="" srcset="" height="32" width="32">
+                  <?php if ($member['linkedin_url']): ?>
+                  <a href="<?php echo h($member['linkedin_url']); ?>" class="social-icon-box" aria-label="Visit <?php echo h($member['name']); ?>'s LinkedIn profile" target="_blank">
+                    <img src="img/linked.svg" alt="LinkedIn" height="32" width="32" loading="lazy">
                   </a>
+                  <?php endif; ?>
+                  <?php if ($member['behance_url']): ?>
+                  <a href="<?php echo h($member['behance_url']); ?>" class="social-icon-box" aria-label="Visit <?php echo h($member['name']); ?>'s Behance profile" target="_blank">
+                    <img src="img/behn.svg" alt="Behance" height="32" width="32" loading="lazy">
+                  </a>
+                  <?php endif; ?>
                 </div>
               </div>
             </div>
           </div>
-
-           <!-- Member 3: Yugan Parmar -->
-           <div class="col-lg-3 col-md-6">
-            <div class="team-card-v3">
-              <div class="team-card-v3-img">
-                <img src="img/p1.png" alt="Mohit Rana" />
-              </div>
-
-              <div class="team-card-v3-content">
-                <div class="team-info">
-                  <h5>Mohit Rana</h5>
-                  <span>Community Head</span>
-                </div>
-
-                <div class="team-social-v3">
-                   <a href="#" class="social-icon-box" aria-label="LinkedIn">
-                     <img src="img/linked.svg" alt="" srcset="" height="32" width="32">
-                   </a>
-                   <a href="#" class="social-icon-box" aria-label="Behance">
-                    <img src="img/behn.svg" alt="" srcset="" height="32" width="32">
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-            <div class="col-lg-3 col-md-6">
-            <div class="team-card-v3">
-              <div class="team-card-v3-img">
-                <img src="img/p1.png" alt="yugan" />
-              </div>
-
-              <div class="team-card-v3-content">
-                <div class="team-info">
-                  <h5>Yugan Parmar  </h5>
-                  <span>Community Head</span>
-                </div>
-
-                <div class="team-social-v3">
-                   <a href="#" class="social-icon-box" aria-label="LinkedIn">
-                     <!-- <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> -->
-                    <img src="img/linked.svg" alt="" srcset="" height="32" width="32">
-                    </a>
-                   <a href="#" class="social-icon-box" aria-label="Behance">
-                    <img src="img/behn.svg" alt="" srcset="" height="32" width="32">
-                    <!-- <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22 7h-5V6h5v1m0 8h-5v-1h5v1m-10.74-6.04C10.59 9.39 10 10 9.24 10H7.2V8.95h1.78c.45 0 .93.07 1.25.32.25.18.42.5.42.84m-1.57 3.32c.57.25 1.05.71 1.05 1.65 0 1.5-1.22 2.08-2.6 2.08H5.5V11.2h2.5c.66 0 1.24.23 1.69.66m6.76 1.44h-4.2c.07.95.73 1.45 1.64 1.45.69 0 1.25-.26 1.48-.75h1.61c-.34 1.23-1.6 2.05-3.09 2.05-2.17 0-3.39-1.53-3.39-3.59 0-2.09 1.27-3.64 3.33-3.64 1.95 0 3.03 1.44 3.03 3.56 0 .19-.01.38-.05.56m-2.13-1.28c0-.73-.55-1.3-1.32-1.3-.77 0-1.38.56-1.42 1.3h2.74Z"/></svg> -->
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-           <div class="col-lg-3 col-md-6">
-            <div class="team-card-v3">
-              <div class="team-card-v3-img">
-                <img src="img/p1.png" alt="Rudra" />
-              </div>
-
-              <div class="team-card-v3-content">
-                <div class="team-info">
-                  <h5>Rudra Patel</h5>
-                  <span>Community Head</span>
-                </div>
-
-                <div class="team-social-v3">
-                   <a href="#" class="social-icon-box" aria-label="LinkedIn">
-                    <img src="img/linked.svg" alt="" srcset="" height="32" width="32">
-                     <!-- <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> -->
-                   </a>
-                   <a href="#" class="social-icon-box" aria-label="Behance">
-                    <img src="img/behn.svg" alt="" srcset="" height="32" width="32">
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-3 col-md-6">
-            <div class="team-card-v3">
-              <div class="team-card-v3-img">
-                <img src="img/p1.png" alt="Rudra" />
-              </div>
-
-              <div class="team-card-v3-content">
-                <div class="team-info">
-                  <h5>Devang Prajapati</h5>
-                  <span>Community Head</span>
-                </div>
-
-                <div class="team-social-v3">
-                   <a href="#" class="social-icon-box" aria-label="LinkedIn">
-                    <img src="img/linked.svg" alt="" srcset="" height="32" width="32">
-                     <!-- <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg> -->
-                   </a>
-                   <a href="#" class="social-icon-box" aria-label="Behance">
-                    <img src="img/behn.svg" alt="" srcset="" height="32" width="32">
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-          
-         
-          
+          <?php endforeach; ?>
+          <?php endif; ?>
         </div>
       </div>
     </section>
