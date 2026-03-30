@@ -78,13 +78,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch approved ideas for display
+// Fetch all ideas for display (latest first)
 try {
     $pdo = getDB();
     $stmt = $pdo->query("
         SELECT id, name, title, description, image, created_at 
         FROM ideas 
-        WHERE status = 'approved' 
         ORDER BY created_at DESC 
         LIMIT 20
     ");

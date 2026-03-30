@@ -34,63 +34,20 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
     }
 }
 
-// Handle status change
-if (isset($_GET['status']) && isset($_GET['id']) && is_numeric($_GET['id'])) {
-    $id = (int)$_GET['id'];
-    $status = $_GET['status'];
-    $allowedStatuses = ['pending', 'approved', 'rejected'];
-    
-    if (in_array($status, $allowedStatuses)) {
-        try {
-            $pdo = getDB();
-            $stmt = $pdo->prepare("UPDATE ideas SET status = :status WHERE id = :id");
-            $stmt->execute([':status' => $status, ':id' => $id]);
-            
-            $message = 'Idea status updated.';
-            $messageType = 'success';
-        } catch (PDOException $e) {
-            error_log("Update status error: " . $e->getMessage());
-            $message = 'Failed to update status.';
-            $messageType = 'danger';
-        }
-    }
-}
-
 // Fetch all ideas
 $ideas = [];
-$filter = $_GET['filter'] ?? 'all';
 
 try {
     $pdo = getDB();
-    $sql = "SELECT * FROM ideas";
-    if ($filter !== 'all' && in_array($filter, ['pending', 'approved', 'rejected'])) {
-        $sql .= " WHERE status = :status";
-    }
-    $sql .= " ORDER BY created_at DESC";
-    
-    $stmt = $pdo->prepare($sql);
-    if ($filter !== 'all' && in_array($filter, ['pending', 'approved', 'rejected'])) {
-        $stmt->execute([':status' => $filter]);
-    } else {
-        $stmt->execute();
-    }
+    $sql = "SELECT * FROM ideas ORDER BY created_at DESC";
+    $stmt = $pdo->query($sql);
     $ideas = $stmt->fetchAll();
 } catch (PDOException $e) {
     error_log("Fetch ideas error: " . $e->getMessage());
 }
 
-// Count by status
-$counts = ['total' => 0, 'pending' => 0, 'approved' => 0, 'rejected' => 0];
-try {
-    $pdo = getDB();
-    $stmt = $pdo->query("SELECT status, COUNT(*) as count FROM ideas GROUP BY status");
-    while ($row = $stmt->fetch()) {
-        $counts[$row['status']] = $row['count'];
-        $counts['total'] += $row['count'];
-    }
-} catch (PDOException $e) {
-    // Silently fail
-}
+// Count total ideas
+$totalIdeas = count($ideas);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -123,43 +80,196 @@ try {
 
     <link rel="stylesheet" href="../css/admin-style.css" />
     <style>
+      /* Ideas Page Custom Styles */
+      .table-card {
+        background: #1a1a2e;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      
+      .table {
+        color: #fff;
+        margin-bottom: 0;
+        table-layout: fixed;
+      }
+      
+      .table thead th {
+        background: rgba(255, 255, 255, 0.05);
+        color: #a0a0b8;
+        font-weight: 600;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 14px 12px;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        vertical-align: middle;
+      }
+      
+      /* Column widths */
+      .table th:nth-child(1),
+      .table td:nth-child(1) { width: 90px; }  /* Image */
+      .table th:nth-child(2),
+      .table td:nth-child(2) { width: 180px; } /* Title */
+      .table th:nth-child(3),
+      .table td:nth-child(3) { width: 180px; } /* Submitted By */
+      .table th:nth-child(4),
+      .table td:nth-child(4) { width: auto; }  /* Description */
+      .table th:nth-child(5),
+      .table td:nth-child(5) { width: 100px; } /* Date */
+      .table th:nth-child(6),
+      .table td:nth-child(6) { width: 160px; } /* Actions */
+      
+      .table tbody td {
+        padding: 16px 12px;
+        vertical-align: middle;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        color: #e0e0e0;
+        background: #1a1a2e;
+        height: 90px;
+      }
+      
+      .table tbody tr:hover td {
+        background: rgba(123, 97, 255, 0.1);
+      }
+      
       .idea-image-thumb {
         width: 60px;
         height: 60px;
         object-fit: cover;
         border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        display: block;
       }
-      .status-badge {
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
+      
+      .idea-title {
+        font-weight: 600;
+        color: #fff;
+        font-size: 0.95rem;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      
+      .idea-author {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      
+      .idea-author-name {
         font-weight: 500;
+        color: #fff;
+        font-size: 0.9rem;
       }
-      .status-pending { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
-      .status-approved { background: rgba(40, 167, 69, 0.2); color: #28a745; }
-      .status-rejected { background: rgba(220, 53, 69, 0.2); color: #dc3545; }
-      .filter-tabs .nav-link {
-        color: rgba(255,255,255,0.7);
-        border: none;
-        padding: 8px 16px;
-        border-radius: 8px;
+      
+      .idea-author-email {
+        color: #7b61ff;
+        font-size: 0.8rem;
+        word-break: break-all;
       }
-      .filter-tabs .nav-link.active {
-        background: rgba(123, 97, 255, 0.2);
+      
+      .idea-desc {
+        color: #a0a0b8;
+        font-size: 0.85rem;
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      
+      .idea-date {
+        color: #888;
+        font-size: 0.85rem;
+        white-space: nowrap;
+      }
+      
+      .action-btns {
+        display: flex;
+        gap: 6px;
+        flex-wrap: nowrap;
+      }
+      
+      .action-btns .btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        border-radius: 6px;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+      
+      .action-btns .btn-outline-primary {
+        border-color: #7b61ff;
         color: #7b61ff;
       }
-      .action-btns .btn {
-        padding: 4px 10px;
-        font-size: 0.85rem;
+      
+      .action-btns .btn-outline-primary:hover {
+        background: #7b61ff;
+        color: #fff;
       }
-      .idea-desc {
-        max-width: 300px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+      
+      .action-btns .btn-outline-danger:hover {
+        background: #dc3545;
+        color: #fff;
+      }
+      
+      /* Stats Card Styling */
+      .stat-card {
+        background: #1a1a2e;
+        border-radius: 16px;
+        padding: 20px 24px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      
+      .stat-card .stat-info h3 {
+        color: #fff;
+      }
+      
+      .stat-card .stat-info p {
+        color: #a0a0b8;
+      }
+      
+      /* Empty State */
+      .empty-state {
+        padding: 60px 20px;
+        text-align: center;
+      }
+      
+      .empty-state i {
+        font-size: 4rem;
+        color: #6b6b80;
+        margin-bottom: 16px;
+      }
+      
+      .empty-state p {
+        color: #a0a0b8;
+        font-size: 1.1rem;
+      }
+      
+      /* No image placeholder */
+      .no-image {
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .no-image i {
+        font-size: 1.2rem;
+        color: #666;
       }
     </style>
   </head>
+      
+    
 
   <body>
     <div class="admin-wrapper">
@@ -249,8 +359,8 @@ try {
           <div class="topbar-actions">
             <button class="topbar-btn" aria-label="Notifications">
               <i class="bi bi-bell"></i>
-              <?php if ($counts['pending'] > 0): ?>
-              <span class="badge"><?php echo $counts['pending']; ?></span>
+              <?php if ($totalIdeas > 0): ?>
+              <span class="badge"><?php echo $totalIdeas; ?></span>
               <?php endif; ?>
             </button>
 
@@ -292,54 +402,12 @@ try {
                 <i class="bi bi-lightbulb-fill"></i>
               </div>
               <div class="stat-info">
-                <h3><?php echo $counts['total']; ?></h3>
+                <h3><?php echo $totalIdeas; ?></h3>
                 <p>Total Ideas</p>
-              </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon bg-warning">
-                <i class="bi bi-clock-fill"></i>
-              </div>
-              <div class="stat-info">
-                <h3><?php echo $counts['pending']; ?></h3>
-                <p>Pending Review</p>
-              </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon bg-success">
-                <i class="bi bi-check-circle-fill"></i>
-              </div>
-              <div class="stat-info">
-                <h3><?php echo $counts['approved']; ?></h3>
-                <p>Approved</p>
-              </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon bg-danger">
-                <i class="bi bi-x-circle-fill"></i>
-              </div>
-              <div class="stat-info">
-                <h3><?php echo $counts['rejected']; ?></h3>
-                <p>Rejected</p>
               </div>
             </div>
           </div>
 
-          <!-- FILTER TABS -->
-          <ul class="nav filter-tabs mb-4">
-            <li class="nav-item">
-              <a class="nav-link <?php echo $filter === 'all' ? 'active' : ''; ?>" href="?filter=all">All</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link <?php echo $filter === 'pending' ? 'active' : ''; ?>" href="?filter=pending">Pending</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link <?php echo $filter === 'approved' ? 'active' : ''; ?>" href="?filter=approved">Approved</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link <?php echo $filter === 'rejected' ? 'active' : ''; ?>" href="?filter=rejected">Rejected</a>
-            </li>
-          </ul>
 
           <!-- IDEAS TABLE -->
           <div class="table-card">
@@ -351,7 +419,6 @@ try {
                     <th>Title</th>
                     <th>Submitted By</th>
                     <th>Description</th>
-                    <th>Status</th>
                     <th>Date</th>
                     <th>Actions</th>
                   </tr>
@@ -359,59 +426,54 @@ try {
                 <tbody>
                   <?php if (empty($ideas)): ?>
                   <tr>
-                    <td colspan="7" class="text-center py-4 text-muted">
-                      <i class="bi bi-inbox display-6 d-block mb-2"></i>
-                      No ideas found.
+                    <td colspan="6">
+                      <div class="empty-state">
+                        <i class="bi bi-lightbulb"></i>
+                        <p>No ideas submitted yet.</p>
+                      </div>
                     </td>
                   </tr>
                   <?php else: ?>
-                  <?php foreach ($ideas as $idea): ?>
+                  <?php foreach ($ideas as $idea): 
+                    // Build mailto link with pre-filled subject and body
+                    $emailSubject = rawurlencode("Re: Your Idea - " . $idea['title']);
+                    $emailBody = rawurlencode("Hi " . $idea['name'] . ",\n\nThank you for submitting your idea: \"" . $idea['title'] . "\"\n\nWe wanted to reach out regarding your submission.\n\n---\nYour original idea:\n" . $idea['description'] . "\n---\n\nBest regards,\nUX Pacific Team\nHello@uxpacific.com");
+                    $mailtoLink = "mailto:" . h($idea['email']) . "?subject=" . $emailSubject . "&body=" . $emailBody;
+                  ?>
                   <tr>
                     <td>
-                      <?php if ($idea['image']): ?>
+                      <?php if (!empty($idea['image'])): ?>
                       <img src="../<?php echo h($idea['image']); ?>" alt="" class="idea-image-thumb">
                       <?php else: ?>
-                      <div class="idea-image-thumb bg-secondary d-flex align-items-center justify-content-center">
-                        <i class="bi bi-image text-muted"></i>
+                      <div class="no-image">
+                        <i class="bi bi-image"></i>
                       </div>
                       <?php endif; ?>
                     </td>
-                    <td><strong><?php echo h($idea['title']); ?></strong></td>
+                    <td><span class="idea-title"><?php echo h($idea['title']); ?></span></td>
                     <td>
-                      <div><?php echo h($idea['name']); ?></div>
-                      <small class="text-muted"><?php echo h($idea['email']); ?></small>
-                    </td>
-                    <td class="idea-desc" title="<?php echo h($idea['description']); ?>">
-                      <?php echo h($idea['description']); ?>
-                    </td>
-                    <td>
-                      <span class="status-badge status-<?php echo $idea['status']; ?>">
-                        <?php echo ucfirst($idea['status']); ?>
-                      </span>
-                    </td>
-                    <td><?php echo date('M d, Y', strtotime($idea['created_at'])); ?></td>
-                    <td class="action-btns">
-                      <div class="dropdown">
-                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                          Status
-                        </button>
-                        <ul class="dropdown-menu">
-                          <li><a class="dropdown-item" href="?id=<?php echo $idea['id']; ?>&status=approved">
-                            <i class="bi bi-check-circle text-success me-2"></i>Approve
-                          </a></li>
-                          <li><a class="dropdown-item" href="?id=<?php echo $idea['id']; ?>&status=pending">
-                            <i class="bi bi-clock text-warning me-2"></i>Pending
-                          </a></li>
-                          <li><a class="dropdown-item" href="?id=<?php echo $idea['id']; ?>&status=rejected">
-                            <i class="bi bi-x-circle text-danger me-2"></i>Reject
-                          </a></li>
-                        </ul>
+                      <div class="idea-author">
+                        <span class="idea-author-name"><?php echo h($idea['name']); ?></span>
+                        <span class="idea-author-email"><?php echo h($idea['email']); ?></span>
                       </div>
-                      <a href="?delete=<?php echo $idea['id']; ?>" 
-                         class="btn btn-sm btn-outline-danger"
-                         onclick="return confirm('Are you sure you want to delete this idea?');">
-                        <i class="bi bi-trash"></i>
-                      </a>
+                    </td>
+                    <td><div class="idea-desc"><?php echo h($idea['description']); ?></div></td>
+                    <td><span class="idea-date"><?php echo date('M d, Y', strtotime($idea['created_at'])); ?></span></td>
+                    <td>
+                      <div class="action-btns">
+                        <a href="<?php echo $mailtoLink; ?>" 
+                           class="btn btn-sm btn-outline-primary"
+                           title="Reply via Email"
+                           target="_blank"
+                           rel="noopener">
+                          <i class="bi bi-envelope-fill"></i> Reply
+                        </a>
+                        <a href="?delete=<?php echo $idea['id']; ?>" 
+                           class="btn btn-sm btn-outline-danger"
+                           onclick="return confirm('Are you sure you want to delete this idea?');">
+                          <i class="bi bi-trash"></i>
+                        </a>
+                      </div>
                     </td>
                   </tr>
                   <?php endforeach; ?>

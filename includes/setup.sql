@@ -14,10 +14,8 @@ CREATE TABLE IF NOT EXISTS ideas (
     title VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     image VARCHAR(500) DEFAULT NULL,
-    status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_status (status),
     INDEX idx_created (created_at DESC)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
