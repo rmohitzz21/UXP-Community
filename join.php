@@ -8,7 +8,7 @@
     <title>Join Our Community | UX Pacific</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="img/LOGO.png" />
+    <link rel="icon" type="image/png" href="img/ux-community.png" />
 
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -43,7 +43,7 @@
       <div class="container">
         <div class="navbar-glass w-100 d-flex align-items-center flex-wrap">
           <a class="navbar-brand text-white" href="index.php">
-            <img src="img/logo1.webp" alt="UX Pacific Logo" class="navbar-logo" />
+            <img src="img/ux-community.png" alt="UX Pacific Logo" class="navbar-logo" />
           </a>
 
           <button
@@ -116,7 +116,7 @@
         <div class="footer-main">
           <div class="footer-top">
             <div class="footer-brand">
-              <img src="img/LOGO.png" alt="UX Pacific" />
+              <img src="img/ux-community.png" alt="UX Pacific" />
               <p>
                 Join our community of designers and developers creating the
                 future of digital experiences.

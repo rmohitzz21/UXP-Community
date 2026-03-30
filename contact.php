@@ -39,7 +39,7 @@
       <div class="container">
         <div class="navbar-glass w-100 d-flex align-items-center flex-wrap">
           <a class="navbar-brand text-white" href="index.php">
-            <img src="img/5.png" alt="UX Pacific Logo" class="navbar-logo" />
+            <img src="img/ux-community.png" alt="UX Pacific Logo" class="navbar-logo" />
           </a>
 
           <button

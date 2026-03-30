@@ -1,461 +1,302 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Submit your project idea to UX Pacific Community - Share your vision with designers, developers, and creators who can help bring it to life." />
-    <meta name="keywords" content="project ideas, UX design, UI design, collaboration, submit idea, design community" />
-    <meta name="author" content="UX Pacific" />
-    <meta name="theme-color" content="#6147bd" />
-    <title>Submit Your Idea | UX Pacific Community</title>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Share Your Idea - UX Pacific</title>
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="img/logo1.webp" />
+        <!-- Bootstrap 5 CSS -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
 
-    <!-- Preconnect for performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+        <!-- Google Font -->
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <!-- Bootstrap 5 CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+        <!-- Bootstrap Icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-    <!-- Google Fonts - Gabarito for headings -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+        <link rel="stylesheet" href="./css/style.css" />
+        <link rel="stylesheet" href="./css/join-style.css" />
+        <style>
+                /* Specific overrides for Idea Page */
+                .idea-section {
+                        padding: 140px 0 80px;
+                        min-height: 80vh;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                }
+                
+                .idea-card {
+                        background: linear-gradient(180deg, rgba(23, 23, 23, 0.4), rgba(10, 10, 20, 0.6));
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                        border-radius: 32px;
+                        padding: 36px 40px;
+                        max-width: 800px;
+                        margin: 0 auto;
+                        backdrop-filter: blur(16px);
+                        box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+                        transition: opacity 0.3s ease;
+                }
 
-    <link rel="stylesheet" href="./css/style.css" />
-  </head>
+                .idea-form .contact-field input,
+                .idea-form .contact-field textarea {
+                          width: 100%;
+                          background: linear-gradient(#121212, #121212) padding-box, linear-gradient(to right, #ffffff 0%, #2e2e3e 100%) border-box;
+                          border: 2px solid transparent;
+                          border-radius: 6px;
+                          color: #eee;
+                          padding: 16px 20px;
+                          font-size: 1.1rem;
+                          outline: none;
+                          margin-bottom: 16px;
+                }
+                
+                .idea-form .contact-field textarea {
+                        min-height: 115px;
+                        resize: vertical;
+                }
 
-  <body class="main">
-    <!-- Skip to main content link for accessibility -->
-    <a href="#idea-form" class="skip-link">Skip to main content</a>
-    
-    <!-- Background shapes -->
-    <div class="hero-shapes">
-      <div class="hero-shape hero-shape-1"></div>
-      <div class="hero-shape hero-shape-2"></div>
-    </div>
+                .idea-form .contact-field input:focus,
+                .idea-form .contact-field textarea:focus {
+                          border-color: #7b61ff;
+                }
 
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg fixed-top mt-3">
-      <div class="container">
-        <div class="navbar-glass w-100 d-flex align-items-center flex-wrap">
-          <a class="navbar-brand text-white" href="index.php">
-            <img src="img/logo1.webp" alt="UX Pacific Logo" class="navbar-logo" />
-          </a>
+                .idea-form .contact-row {
+                        display: flex;
+                        gap: 20px;
+                        margin-bottom: 0;
+                }
+                
+                .idea-form .contact-row .contact-field {
+                        flex: 1;
+                }
 
-          <button
-            class="navbar-toggler ms-auto"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation menu"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
+                @media(max-width: 768px) {
+                        .idea-form .contact-row {
+                                flex-direction: column;
+                                gap: 0;
+                        }
+                }
 
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto me-3 gap-2">
-              <li class="nav-item">
-                <a class="nav-link" href="index.php">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="index.php#about-section">About</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="index.php#resources-section">Resources</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="index.php#event-section">Events</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="contact.php">Contact</a>
-              </li>
-            </ul>
-            <a href="join.php" class="btn btn-primary-custom">Join Us</a>
-          </div>
-        </div>
-      </div>
-    </nav>
+                /* Success Animation Styles */
+                .success-checkmark-anim {
+                        width: 80px;
+                        height: 80px;
+                        border-radius: 50%;
+                        background: rgba(74, 222, 128, 0.15);
+                        color: #4ade80;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin: 0 auto;
+                        position: relative;
+                }
+                
+                .success-checkmark-anim::after {
+                        content: "";
+                        position: absolute;
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 50%;
+                        border: 1px solid #4ade80;
+                        animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+                }
+                
+                .success-checkmark-anim i {
+                        display: inline-block;
+                        opacity: 0;
+                        transform: scale(0);
+                }
 
-    <!-- MAIN CONTENT -->
-    <main id="idea-form">
-      <section class="contact-section py-5 mt-5">
-        <div class="container">
-          <!-- Page Header -->
-          <div class="row justify-content-center mb-5">
-            <div class="col-lg-8 text-center">
-              <h1 class="display-4 text-white mb-3">Share Your Idea</h1>
-              <p class="lead text-secondary">
-                Have a project idea you'd like to bring to life? Share it with our community of designers and developers who are ready to collaborate!
-              </p>
-            </div>
-          </div>
+                /* Class that triggers animation */
+                .animate-trigger .success-checkmark-anim i {
+                        animation: pop-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.1s forwards;
+                }
 
-          <div class="row justify-content-center">
-            <div class="col-lg-8">
-              <div class="contact-form-container glass-card p-4 p-md-5">
-                <form id="ideaForm" action="#" method="post" novalidate>
-                  <!-- Project Name -->
-                  <div class="mb-4">
-                    <label for="projectName" class="form-label text-white">
-                      Project Name <span class="text-danger" aria-hidden="true">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      class="form-control form-control-custom"
-                      id="projectName"
-                      name="projectName"
-                      placeholder="Give your project a catchy name"
-                      required
-                      autocomplete="off"
-                    />
-                    <div class="invalid-feedback">Please provide a project name.</div>
-                  </div>
+                @keyframes pulse-ring {
+                        0% { transform: scale(0.9); opacity: 0.8; }
+                        100% { transform: scale(1.5); opacity: 0; }
+                }
 
-                  <!-- Your Name -->
-                  <div class="mb-4">
-                    <label for="yourName" class="form-label text-white">
-                      Your Name <span class="text-danger" aria-hidden="true">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      class="form-control form-control-custom"
-                      id="yourName"
-                      name="yourName"
-                      placeholder="Enter your full name"
-                      required
-                      autocomplete="name"
-                    />
-                    <div class="invalid-feedback">Please provide your name.</div>
-                  </div>
+                @keyframes pop-in {
+                        0% { transform: scale(0); opacity: 0; }
+                        100% { transform: scale(1); opacity: 1; }
+                }
+        </style>
+    </head>
 
-                  <!-- Email -->
-                  <div class="mb-4">
-                    <label for="email" class="form-label text-white">
-                      Email Address <span class="text-danger" aria-hidden="true">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      class="form-control form-control-custom"
-                      id="email"
-                      name="email"
-                      placeholder="your@email.com"
-                      required
-                      autocomplete="email"
-                    />
-                    <div class="invalid-feedback">Please provide a valid email address.</div>
-                  </div>
+    <body class="main">
+        <!-- NAVBAR -->
+          <nav class="navbar navbar-expand-lg fixed-top mt-3">
+            <div class="container">
+                <div class="navbar-glass w-100 d-flex align-items-center flex-wrap">
+                    <a class="navbar-brand text-white" href="index.php">
+                        <img src="img/ux-community.png" alt="UX Pacific Logo" class="navbar-logo" />
+                    </a>
 
-                  <!-- Project Category -->
-                  <div class="mb-4">
-                    <label for="category" class="form-label text-white">
-                      Project Category <span class="text-danger" aria-hidden="true">*</span>
-                    </label>
-                    <select
-                      class="form-select form-control-custom"
-                      id="category"
-                      name="category"
-                      required
+                    <button
+                        class="navbar-toggler text-white ms-auto"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navMenu"
                     >
-                      <option value="" disabled selected>Select a category</option>
-                      <option value="web-app">Web Application</option>
-                      <option value="mobile-app">Mobile App</option>
-                      <option value="design-system">Design System</option>
-                      <option value="portfolio">Portfolio / Website</option>
-                      <option value="ecommerce">E-commerce</option>
-                      <option value="saas">SaaS Product</option>
-                      <option value="open-source">Open Source Project</option>
-                      <option value="other">Other</option>
-                    </select>
-                    <div class="invalid-feedback">Please select a category.</div>
-                  </div>
-
-                  <!-- Project Description -->
-                  <div class="mb-4">
-                    <label for="description" class="form-label text-white">
-                      Project Description <span class="text-danger" aria-hidden="true">*</span>
-                    </label>
-                    <textarea
-                      class="form-control form-control-custom"
-                      id="description"
-                      name="description"
-                      rows="5"
-                      placeholder="Tell us about your project idea. What problem does it solve? Who is it for?"
-                      required
-                    ></textarea>
-                    <div class="invalid-feedback">Please describe your project idea.</div>
-                  </div>
-
-                  <!-- Skills Needed -->
-                  <div class="mb-4">
-                    <label class="form-label text-white">
-                      Skills You're Looking For
-                    </label>
-                    <div class="row">
-                      <div class="col-6 col-md-4 mb-2">
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="skillUX" name="skills" value="ux-design" />
-                          <label class="form-check-label text-secondary" for="skillUX">UX Design</label>
-                        </div>
-                      </div>
-                      <div class="col-6 col-md-4 mb-2">
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="skillUI" name="skills" value="ui-design" />
-                          <label class="form-check-label text-secondary" for="skillUI">UI Design</label>
-                        </div>
-                      </div>
-                      <div class="col-6 col-md-4 mb-2">
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="skillFrontend" name="skills" value="frontend" />
-                          <label class="form-check-label text-secondary" for="skillFrontend">Frontend Dev</label>
-                        </div>
-                      </div>
-                      <div class="col-6 col-md-4 mb-2">
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="skillBackend" name="skills" value="backend" />
-                          <label class="form-check-label text-secondary" for="skillBackend">Backend Dev</label>
-                        </div>
-                      </div>
-                      <div class="col-6 col-md-4 mb-2">
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="skillMobile" name="skills" value="mobile" />
-                          <label class="form-check-label text-secondary" for="skillMobile">Mobile Dev</label>
-                        </div>
-                      </div>
-                      <div class="col-6 col-md-4 mb-2">
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="skillContent" name="skills" value="content" />
-                          <label class="form-check-label text-secondary" for="skillContent">Content Writing</label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Timeline -->
-                  <div class="mb-4">
-                    <label for="timeline" class="form-label text-white">
-                      Expected Timeline
-                    </label>
-                    <select
-                      class="form-select form-control-custom"
-                      id="timeline"
-                      name="timeline"
-                    >
-                      <option value="" disabled selected>Select a timeline</option>
-                      <option value="1-week">1 Week</option>
-                      <option value="2-weeks">2 Weeks</option>
-                      <option value="1-month">1 Month</option>
-                      <option value="2-3-months">2-3 Months</option>
-                      <option value="flexible">Flexible / No Rush</option>
-                    </select>
-                  </div>
-
-                  <!-- Additional Links -->
-                  <div class="mb-4">
-                    <label for="links" class="form-label text-white">
-                      Reference Links (Optional)
-                    </label>
-                    <input
-                      type="url"
-                      class="form-control form-control-custom"
-                      id="links"
-                      name="links"
-                      placeholder="https://example.com (inspiration, mockups, etc.)"
-                      autocomplete="url"
-                    />
-                    <small class="text-muted">Add links to inspiration, existing mockups, or related projects.</small>
-                  </div>
-
-                  <!-- Submit Button -->
-                  <div class="text-center mt-5">
-                    <button type="submit" class="btn btn-primary-custom btn-lg px-5">
-                      Submit Your Idea
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="ms-2"
-                        aria-hidden="true"
-                      >
-                        <path d="M5 12h14"></path>
-                        <path d="m12 5 7 7-7 7"></path>
-                      </svg>
+                        ☰
                     </button>
-                  </div>
-                </form>
-              </div>
 
-              <!-- Info Card -->
-              <div class="glass-card p-4 mt-4 text-center">
-                <h5 class="text-white mb-3">What happens next?</h5>
-                <div class="row g-4">
-                  <div class="col-md-4">
-                    <div class="text-primary mb-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z"></path>
-                        <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"></path>
-                      </svg>
+                    <div
+                        class="collapse navbar-collapse justify-content-center"
+                        id="navMenu"
+                    >
+                        <ul class="navbar-nav gap-2">
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.php">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.php#about-section">About Us</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.php#resources-section">Resources</a>
+                            </li>
+                            <li class="nav-item"><a class="nav-link" href="index.php#event-section">Event</a></li>
+                            <!-- Mobile Contact Button -->
+                            <li class="nav-item d-lg-none mt-3">
+                                <a href="contact.php" class="btn btn-primary-gradient w-100">Contact Us</a>
+                            </li>
+                        </ul>
                     </div>
-                    <h6 class="text-white">We Review</h6>
-                    <p class="text-secondary small mb-0">Our team reviews your idea within 48 hours.</p>
-                  </div>
-                  <div class="col-md-4">
-                    <div class="text-primary mb-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                      </svg>
+
+                    <div class="d-none d-lg-block">
+                        <a href="contact.php" class="btn btn-primary-gradient">Contact Us</a>
                     </div>
-                    <h6 class="text-white">Team Match</h6>
-                    <p class="text-secondary small mb-0">We connect you with interested collaborators.</p>
-                  </div>
-                  <div class="col-md-4">
-                    <div class="text-primary mb-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>
-                      </svg>
-                    </div>
-                    <h6 class="text-white">Build Together</h6>
-                    <p class="text-secondary small mb-0">Start building your project with the team!</p>
-                  </div>
                 </div>
-              </div>
             </div>
-          </div>
-        </div>
-      </section>
-    </main>
+        </nav>
 
-    <!-- FOOTER -->
-    <footer class="footer py-5">
-      <div class="container">
-        <div class="row g-4">
-          <div class="col-lg-4">
-            <div class="footer-brand mb-3">
-              <img src="img/logo1.webp" alt="UX Pacific Logo" class="footer-logo" />
-            </div>
-            <p class="text-secondary">
-              A community of designers, developers, and creators building awesome projects together.
-            </p>
-            <div class="social-links">
-              <a href="#" class="social-link" aria-label="Follow us on Twitter">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
-                </svg>
-              </a>
-              <a href="#" class="social-link" aria-label="Join us on Discord">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <circle cx="9" cy="12" r="1"></circle>
-                  <circle cx="15" cy="12" r="1"></circle>
-                  <path d="M7.5 7.5c3.5-1 5.5-1 9 0"></path>
-                  <path d="M7 16.5c3.5 1 6.5 1 10 0"></path>
-                  <path d="M15.5 17c0 1 1.5 3 2 3 1.5 0 2.833-1.667 3.5-3 .667-1.667.5-5.833-1.5-11.5-1.457-1.015-3-1.34-4.5-1.5l-1 2.5"></path>
-                  <path d="M8.5 17c0 1-1.356 3-1.832 3-1.429 0-2.698-1.667-3.333-3-.635-1.667-.476-5.833 1.428-11.5C6.151 4.485 7.545 4.16 9 4l1 2.5"></path>
-                </svg>
-              </a>
-              <a href="#" class="social-link" aria-label="Follow us on LinkedIn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                  <rect width="4" height="12" x="2" y="9"></rect>
-                  <circle cx="4" cy="4" r="2"></circle>
-                </svg>
-              </a>
-              <a href="#" class="social-link" aria-label="Follow us on GitHub">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
-                  <path d="M9 18c-4.51 2-5-2-7-2"></path>
-                </svg>
-              </a>
-            </div>
-          </div>
-          <div class="col-6 col-lg-2">
-            <h6 class="footer-heading text-white mb-3">Quick Links</h6>
-            <ul class="footer-links list-unstyled">
-              <li><a href="index.php">Home</a></li>
-              <li><a href="index.php#about-section">About</a></li>
-              <li><a href="index.php#resources-section">Resources</a></li>
-              <li><a href="index.php#event-section">Events</a></li>
-            </ul>
-          </div>
-          <div class="col-6 col-lg-2">
-            <h6 class="footer-heading text-white mb-3">Get Involved</h6>
-            <ul class="footer-links list-unstyled">
-              <li><a href="join.php">Join Us</a></li>
-              <li><a href="idea.php">Submit Idea</a></li>
-              <li><a href="contact.php">Contact</a></li>
-            </ul>
-          </div>
-          <div class="col-lg-4">
-            <h6 class="footer-heading text-white mb-3">Stay Updated</h6>
-            <p class="text-secondary small">Subscribe to our newsletter for the latest updates and resources.</p>
-            <form class="newsletter-form d-flex gap-2">
-              <label for="footer-email" class="visually-hidden">Email address</label>
-              <input
-                type="email"
-                id="footer-email"
-                class="form-control form-control-custom"
-                placeholder="Enter your email"
-                required
-                autocomplete="email"
-              />
-              <button type="submit" class="btn btn-primary-custom" aria-label="Subscribe to newsletter">
-                Subscribe
-              </button>
-            </form>
-          </div>
-        </div>
-        <hr class="footer-divider my-4" />
-        <div class="row align-items-center">
-          <div class="col-md-6 text-center text-md-start">
-            <p class="text-secondary small mb-0">
-              &copy; 2024 UX Pacific Community. All rights reserved.
-            </p>
-          </div>
-          <div class="col-md-6 text-center text-md-end">
-            <a href="#" class="text-secondary small me-3">Privacy Policy</a>
-            <a href="#" class="text-secondary small">Terms of Service</a>
-          </div>
-        </div>
-      </div>
-    </footer>
+        <main class="main">
+            <section class="idea-section">
+                <div class="container text-center">
+                   
+                    <h1 class="join-main-title">Share Your  <span>Ideas.</span></h1>
+                    <p class="join-main-subtitle">
+                        Got an idea, a concept, or an event in mind?<br>
+                        If it aligns with the community, we'd love to build it together.
+                    </p>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Form Validation Script -->
-    <script>
-      // Form validation
-      (function () {
-        'use strict';
-        const form = document.getElementById('ideaForm');
-        
-        if (form) {
-          form.addEventListener('submit', function (event) {
-            if (!form.checkValidity()) {
-              event.preventDefault();
-              event.stopPropagation();
+                    <!-- FORM CONTAINER -->
+                    <div class="idea-card" id="idea-card-container">
+                        <form class="idea-form" onsubmit="handleIdeaPageSubmit(event)">
+                            <div class="contact-row">
+                                <div class="contact-field">
+                                    <input type="text" placeholder="Your Name" required>
+                                </div>
+                                <div class="contact-field">
+                                    <input type="email" placeholder="Your Email" required>
+                                </div>
+                            </div>
+
+                            <div class="contact-field mt-3">
+                                <textarea rows="5" placeholder="Share your idea / proposal..." required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary-gradient mt-4 px-5 py-3 rounded-pill fw-bold">
+                                Send my Idea
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- SUCCESS MESSAGE container (Hidden by default) -->
+                    <div class="idea-card success-card" id="idea-success-msg" style="display: none;">
+                          <div class="success-checkmark-anim mb-3">
+                              <i class="bi bi-check-lg display-4"></i>
+                          </div>
+                          <h2 class="text-white fw-bold mb-2">Thanks!</h2>
+                          <p class="text-white-50 fs-5">One real human will read this!</p>
+                    </div>
+
+                    <!-- EXTRA INFO -->
+                    <div class="mt-5 text-white-50">
+                        <p>Preferred email for detailed proposals pitch us on <a href="mailto:hello@uxpacific.com" class="text-primary text-decoration-none">hello@uxpacific.com</a></p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="site-footer">
+                <div class="footer-main">
+                    <div class="footer-top">
+                        <div class="footer-brand">
+                            <img src="img/ux-community.png" alt="UX Pacific" />
+                            <p>
+                                Join our community of designers and developers creating the
+                                future of digital experiences.
+                            </p>
+                            <div class="footer-socials">
+                                <a href="https://dribbble.com/social-ux-pacific" target="_blank" rel="noopener">
+                                    <img src="img/bl.png" alt="Dribbble" />
+                                </a>
+                                <a href="https://www.instagram.com/official_uxpacific/" target="_blank" rel="noopener">
+                                    <img src="img/i.png" alt="Instagram" />
+                                </a>
+                                <a href="https://www.linkedin.com/company/uxpacific/" target="_blank" rel="noopener">
+                                    <img src="img/in1.png" alt="LinkedIn" />
+                                </a>
+                                <a href="https://in.pinterest.com/uxpacific/" target="_blank" rel="noopener">
+                                    <img src="img/p.png" alt="Pinterest" />
+                                </a>
+                                <a href="https://www.behance.net/ux_pacific" target="_blank" rel="noopener">
+                                    <img src="img/be.png" alt="Behance" />
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="footer-contact">
+                            <p>+91 9274061063&nbsp;&nbsp;&nbsp;&nbsp;|</p>
+                            <p>hello@uxpacific.com&nbsp;&nbsp;&nbsp;&nbsp;|</p>
+                            <p>UX Pacific, Ahmedabad.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p>© 2026 UX Pacific Community. All rights reserved.</p>
+                    <div class="footer-links">
+                        <a href="#">Privacy Policy</a>
+                        <span>•</span>
+                        <a href="#">Terms of Service</a>
+                    </div>
+                </div>
+            </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            function handleIdeaPageSubmit(e) {
+                e.preventDefault();
+                const card = document.getElementById('idea-card-container');
+                const success = document.getElementById('idea-success-msg');
+                
+                // Simple fade out/in effect
+                card.style.opacity = '0';
+                setTimeout(() => {
+                    card.style.display = 'none';
+                    success.style.display = 'block'; // block to show
+                    // trigger layout reflow
+                    void success.offsetWidth;
+                    
+                    // Add animation triggers
+                    success.classList.add('animate-trigger');
+                    
+                    success.style.opacity = '1';
+                }, 300);
             }
-            form.classList.add('was-validated');
-          }, false);
-        }
-      })();
-    </script>
-  </body>
+        </script>
+    </body>
 </html>
