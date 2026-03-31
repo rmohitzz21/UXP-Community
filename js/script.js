@@ -120,15 +120,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Resource filter functionality
     const filterBtns = document.querySelectorAll('.resource-filters .filter-btn');
-    if (filterBtns.length > 0) {
+    const resourcesGrid = document.getElementById('resources-grid');
+    if (filterBtns.length > 0 && resourcesGrid) {
         filterBtns.forEach(btn => {
             btn.addEventListener('click', () => {
+                // Update active state
                 filterBtns.forEach(b => {
                     b.classList.remove('active');
                     b.setAttribute('aria-selected', 'false');
                 });
                 btn.classList.add('active');
                 btn.setAttribute('aria-selected', 'true');
+                
+                // Filter resources
+                const filter = btn.dataset.filter;
+                const cards = resourcesGrid.querySelectorAll('[data-category]');
+                cards.forEach(card => {
+                    if (filter === 'all' || card.dataset.category === filter) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
             });
         });
     }

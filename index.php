@@ -5,6 +5,7 @@ require_once __DIR__ . '/includes/db.php';
 $upcomingEvents = [];
 $pastEvents = [];
 $teamMembers = [];
+$resources = [];
 
 try {
     $pdo = getDB();
@@ -39,8 +40,30 @@ try {
         LIMIT 12
     ");
     $teamMembers = $stmt->fetchAll();
+    
+    // Resources
+    $stmt = $pdo->query("
+        SELECT * FROM resources 
+        WHERE is_active = 1 
+        ORDER BY created_at DESC 
+        LIMIT 8
+    ");
+    $resources = $stmt->fetchAll();
 } catch (PDOException $e) {
     // Database not set up yet, use empty arrays
+}
+
+// Helper for resource type tag
+function getResourceTag($type) {
+    $tags = [
+        'pdf' => 'PDF',
+        'link' => 'Link',
+        'article' => 'Article',
+        'video' => 'Video',
+        'image' => 'Image',
+        'other' => 'Resource'
+    ];
+    return $tags[$type] ?? 'Resource';
 }
 ?>
 <!DOCTYPE html>
@@ -55,7 +78,7 @@ try {
     <title>UX Pacific Community | Design & Development Hub</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="img/ux.png" style="height: 20px; width: 20px;"/>
+    <link rel="icon" type="image/png" href="img/faviconUXP444@4x-789.png" />
 
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -396,77 +419,63 @@ try {
           <button class="filter-btn" role="tab" aria-selected="false" data-filter="design">Design</button>
           <button class="filter-btn" role="tab" aria-selected="false" data-filter="development">Development</button>
           <button class="filter-btn" role="tab" aria-selected="false" data-filter="strategy">Strategy</button>
+          <button class="filter-btn" role="tab" aria-selected="false" data-filter="uiux">UI/UX</button>
         </div>
 
         <!-- Resource Cards -->
-        <div class="row g-4 mt-5">
-          <!-- Card 1 -->
+        <div class="row g-4 mt-5" id="resources-grid">
+          <?php if (empty($resources)): ?>
+          <!-- Fallback static content if no resources in database -->
           <div class="col-lg-3 col-md-6">
-            <article class="resource-card">
+            <article class="resource-card" data-category="design">
               <img src="img/et.png" alt="UX Booklets preview" loading="lazy" />
               <span class="resource-tag">Booklet</span>
-
               <div class="resource-body">
                 <h5>UX Booklets</h5>
-                <p>
-                  Explore our 10-series UX Booklet collection covering
-                  everything from research to usability testing.
-                </p>
+                <p>Explore our UX Booklet collection covering everything from research to usability testing.</p>
                 <a href="#" class="resource-link">View Booklets <span aria-hidden="true">→</span></a>
               </div>
             </article>
           </div>
-
-          <!-- Card 2 -->
           <div class="col-lg-3 col-md-6">
-            <article class="resource-card">
-              <img src="img/et.png" alt="AI/ML Article preview" loading="lazy" />
+            <article class="resource-card" data-category="development">
+              <img src="img/et.png" alt="Articles preview" loading="lazy" />
               <span class="resource-tag">Articles</span>
-
               <div class="resource-body">
-                <h5>AI/ML Article</h5>
-                <p>
-                  Read stories, tips, and insights from our design community.
-                  Stay updated with the latest UX trends.
-                </p>
+                <h5>AI/ML Articles</h5>
+                <p>Read stories, tips, and insights from our design community.</p>
                 <a href="#" class="resource-link">Read Articles <span aria-hidden="true">→</span></a>
               </div>
             </article>
           </div>
-
-          <!-- Card 3 -->
-          <div class="col-lg-3 col-md-6">
+          <?php else: ?>
+          <?php foreach ($resources as $res): ?>
+          <div class="col-lg-3 col-md-6" data-category="<?php echo h($res['category']); ?>">
             <article class="resource-card">
-              <img src="img/et.png" alt="UXPacific Badges preview" loading="lazy" />
-              <span class="resource-tag">Merchandise</span>
+              <?php if ($res['thumbnail']): ?>
+              <img src="<?php echo h($res['thumbnail']); ?>" alt="<?php echo h($res['title']); ?>" loading="lazy" />
+              <?php else: ?>
+              <img src="img/et.png" alt="<?php echo h($res['title']); ?>" loading="lazy" />
+              <?php endif; ?>
+              <span class="resource-tag"><?php echo getResourceTag($res['type']); ?></span>
 
               <div class="resource-body">
-                <h5>Badges</h5>
+                <h5><?php echo h($res['title']); ?></h5>
                 <p>
-                  Wear your creativity! Explore UXPacific T-shirts, badges,
-                  stickers, and accessories.
+                  <?php echo h(mb_strimwidth($res['description'] ?? 'Explore this resource.', 0, 100, '...')); ?>
                 </p>
-                <a href="#" class="resource-link">Go to Store <span aria-hidden="true">→</span></a>
+                <?php if ($res['file_path']): ?>
+                <a href="<?php echo h($res['file_path']); ?>" class="resource-link" download>Download <span aria-hidden="true">↓</span></a>
+                <?php elseif ($res['external_link']): ?>
+                <a href="<?php echo h($res['external_link']); ?>" class="resource-link" target="_blank" rel="noopener">View Resource <span aria-hidden="true">→</span></a>
+                <?php else: ?>
+                <a href="#" class="resource-link">Learn More <span aria-hidden="true">→</span></a>
+                <?php endif; ?>
               </div>
             </article>
           </div>
-
-          <!-- Card 4 -->
-          <div class="col-lg-3 col-md-6">
-            <article class="resource-card">
-              <img src="img/et.png" alt="Case Studies preview" loading="lazy" />
-              <span class="resource-tag">Case Studies</span>
-
-              <div class="resource-body">
-                <h5>Case Studies</h5>
-                <p>
-                  Dive into real design projects, UX challenges, and research
-                  stories crafted by our community.
-                </p>
-                <a href="#" class="resource-link">Read More <span aria-hidden="true">→</span></a>
-              </div>
-            </article>
-          </div>
+          <?php endforeach; ?>
+          <?php endif; ?>
         </div>
       </div>
     </section>

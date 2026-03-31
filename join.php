@@ -8,7 +8,7 @@
     <title>Join Our Community | UX Pacific</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="img/ux-community.png" />
+    <link rel="icon" type="image/png" href="img/faviconUXP444@4x-789.png" />
 
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

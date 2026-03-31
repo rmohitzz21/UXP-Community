@@ -89,7 +89,7 @@ function timeAgo($datetime) {
     <title>Admin Dashboard | UX Pacific Community</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="../img/LOGO.png" />
+    <link rel="icon" type="image/png" href="../img/faviconUXP444@4x-789.png" />
 
     <!-- Bootstrap 5 CSS -->
     <link

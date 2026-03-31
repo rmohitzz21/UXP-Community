@@ -10,7 +10,7 @@
     <title>UX Pacific Community | Design & Development Hub</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href=\"assets/img/slogo.png" />
+    <link rel="icon" type="image/png" href="../assets/img/faviconUXP444@4x-789.png" />
 
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

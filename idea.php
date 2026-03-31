@@ -100,6 +100,9 @@ try {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Share Your Idea - UX Pacific</title>
 
+            <link rel="icon" type="image/png" href="img/faviconUXP444@4x-789.png" />
+
+
         <!-- Bootstrap 5 CSS -->
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"

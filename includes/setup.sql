@@ -97,3 +97,23 @@ CREATE TABLE IF NOT EXISTS team_members (
     INDEX idx_active (is_active),
     INDEX idx_order (display_order)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Resources table (for community resources library)
+CREATE TABLE IF NOT EXISTS resources (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT DEFAULT NULL,
+    type ENUM('pdf', 'link', 'article', 'video', 'image', 'other') NOT NULL DEFAULT 'link',
+    file_path VARCHAR(500) DEFAULT NULL,
+    external_link VARCHAR(1000) DEFAULT NULL,
+    category ENUM('design', 'development', 'strategy', 'uiux', 'tools', 'templates', 'other') NOT NULL DEFAULT 'design',
+    thumbnail VARCHAR(500) DEFAULT NULL,
+    downloads INT DEFAULT 0,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_category (category),
+    INDEX idx_type (type),
+    INDEX idx_active (is_active),
+    INDEX idx_created (created_at DESC)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
