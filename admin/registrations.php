@@ -185,7 +185,7 @@ function getInitials($name) {
                 <ul class="nav-list">
                     <li class="nav-item"><a href="index.php" class="nav-link"><i class="bi bi-grid-1x2-fill"></i><span>Dashboard</span></a></li>
                     <li class="nav-item"><a href="contacts.php" class="nav-link"><i class="bi bi-envelope-fill"></i><span>Contact Messages</span></a></li>
-                    <li class="nav-item"><a href="members.php" class="nav-link"><i class="bi bi-people-fill"></i><span>Members</span></a></li>
+                    <!-- <li class="nav-item"><a href="members.php" class="nav-link"><i class="bi bi-people-fill"></i><span>Members</span></a></li> -->
                     <li class="nav-item"><a href="team.php" class="nav-link"><i class="bi bi-person-badge-fill"></i><span>Team</span></a></li>
                     <li class="nav-item"><a href="ideas.php" class="nav-link"><i class="bi bi-lightbulb-fill"></i><span>Ideas</span></a></li>
                     <li class="nav-item"><a href="events.php" class="nav-link"><i class="bi bi-calendar-event-fill"></i><span>Events</span></a></li>

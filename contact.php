@@ -1,3 +1,95 @@
+<?php
+require_once __DIR__ . '/includes/db.php';
+
+// Start session for flash messages
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$message = '';
+$messageType = '';
+
+// Check for flash message from redirect
+if (isset($_SESSION['flash_message'])) {
+    $message = $_SESSION['flash_message'];
+    $messageType = $_SESSION['flash_type'] ?? 'info';
+    unset($_SESSION['flash_message'], $_SESSION['flash_type']);
+}
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $phone = trim($_POST['phone'] ?? '');
+    $industry = trim($_POST['industry'] ?? '');
+    $contactMessage = trim($_POST['message'] ?? '');
+    
+    // Validation
+    $errors = [];
+    
+    if (empty($name) || strlen($name) < 2) {
+        $errors[] = 'Name is required (min 2 characters).';
+    }
+    
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = 'Valid email is required.';
+    }
+    
+    if (!empty($phone) && !preg_match('/^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,4}[-\s\.]?[0-9]{1,9}$/', $phone)) {
+        $errors[] = 'Please enter a valid phone number.';
+    }
+    
+    if (empty($contactMessage) || strlen($contactMessage) < 10) {
+        $errors[] = 'Message is required (min 10 characters).';
+    }
+    
+    if (empty($errors)) {
+        try {
+            $pdo = getDB();
+            
+            // Create contacts table if not exists
+            $pdo->exec("
+                CREATE TABLE IF NOT EXISTS contacts (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    name VARCHAR(100) NOT NULL,
+                    email VARCHAR(255) NOT NULL,
+                    phone VARCHAR(20),
+                    industry VARCHAR(50),
+                    message TEXT NOT NULL,
+                    status ENUM('new', 'pending', 'replied') DEFAULT 'new',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+            ");
+            
+            $stmt = $pdo->prepare("
+                INSERT INTO contacts (name, email, phone, industry, message) 
+                VALUES (:name, :email, :phone, :industry, :message)
+            ");
+            $stmt->execute([
+                ':name' => $name,
+                ':email' => $email,
+                ':phone' => $phone,
+                ':industry' => $industry,
+                ':message' => $contactMessage
+            ]);
+            
+            // Set flash message and redirect (PRG pattern)
+            $_SESSION['flash_message'] = 'Message sent successfully! We\'ll get back to you within 24 hours.';
+            $_SESSION['flash_type'] = 'success';
+            header('Location: contact.php');
+            exit;
+        } catch (PDOException $e) {
+            error_log("Contact submission error: " . $e->getMessage());
+            // Show actual error in development (remove in production)
+            $message = 'Database error: ' . $e->getMessage();
+            $messageType = 'danger';
+        }
+    } else {
+        $message = implode('<br>', $errors);
+        $messageType = 'danger';
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -28,6 +120,29 @@
     />
 
     <link rel="stylesheet" href="./css/style.css" />
+    <style>
+      .alert-custom {
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 20px;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .alert-success {
+        background: rgba(74, 222, 128, 0.15);
+        border: 1px solid rgba(74, 222, 128, 0.3);
+        color: #4ade80;
+      }
+      .alert-danger {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #ef4444;
+      }
+      .field-error {
+        border-color: #ef4444 !important;
+      }
+    </style>
   </head>
 
   <body class="main">
@@ -86,6 +201,12 @@
 
       <main id="home" class="main">
         <section id="contact" class="contact-section" aria-labelledby="contact-title">
+
+                <?php if ($message): ?>
+                <div class="alert alert-<?php echo $messageType; ?> alert-custom" role="alert">
+                    <?php echo $message; ?>
+                </div>
+                <?php endif; ?>
 
                 <div class="contact-grid">
                 <!-- LEFT: Info panel -->
@@ -149,34 +270,34 @@
                 </div>
 
                 <!-- RIGHT: Form -->
-                <form class="contact-form" action="#" method="post" novalidate>
+                <form class="contact-form" action="contact.php" method="post" novalidate>
                     <div class="contact-row">
                         <div class="contact-field">
                             <label for="name">Name <span class="visually-hidden">(required)</span></label>
-                            <input id="name" name="name" type="text" placeholder="Enter your name here" required autocomplete="name">
+                            <input id="name" name="name" type="text" placeholder="Enter your name here" required autocomplete="name" value="<?php echo h($_POST['name'] ?? ''); ?>">
                         </div>
                         <div class="contact-field">
                             <label for="email">Email <span class="visually-hidden">(required)</span></label>
-                            <input id="email" name="email" type="email" placeholder="Enter your email address" required autocomplete="email">
+                            <input id="email" name="email" type="email" placeholder="Enter your email address" required autocomplete="email" value="<?php echo h($_POST['email'] ?? ''); ?>">
                         </div>
                     </div>
 
                     <div class="contact-row">
                         <div class="contact-field">
                             <label for="phone">Phone Number</label>
-                            <input id="phone" name="phone" type="tel" placeholder="+91 xxxxx-xxxxx" autocomplete="tel">
+                            <input id="phone" name="phone" type="tel" placeholder="+91 xxxxx-xxxxx" autocomplete="tel" value="<?php echo h($_POST['phone'] ?? ''); ?>">
                         </div>
                         <div class="contact-field">
                             <label for="industry">Industry</label>
                             <select id="industry" name="industry" class="contact-select">
-                                <option value="" disabled selected style="background: #1a1a2e; color: #6b6b80;">Select your Industry</option>
-                                <option value="tech" style="background: #1a1a2e; color: #fff;">Technology</option>
-                                <option value="design" style="background: #1a1a2e; color: #fff;">Design</option>
-                                <option value="education" style="background: #1a1a2e; color: #fff;">Education</option>
-                                <option value="healthcare" style="background: #1a1a2e; color: #fff;">Healthcare</option>
-                                <option value="finance" style="background: #1a1a2e; color: #fff;">Finance</option>
-                                <option value="ecommerce" style="background: #1a1a2e; color: #fff;">E-Commerce</option>
-                                <option value="other" style="background: #1a1a2e; color: #fff;">Other</option>
+                                <option value="" disabled <?php echo empty($_POST['industry']) ? 'selected' : ''; ?> style="background: #1a1a2e; color: #6b6b80;">Select your Industry</option>
+                                <option value="Technology" <?php echo ($_POST['industry'] ?? '') === 'Technology' ? 'selected' : ''; ?> style="background: #1a1a2e; color: #fff;">Technology</option>
+                                <option value="Design" <?php echo ($_POST['industry'] ?? '') === 'Design' ? 'selected' : ''; ?> style="background: #1a1a2e; color: #fff;">Design</option>
+                                <option value="Education" <?php echo ($_POST['industry'] ?? '') === 'Education' ? 'selected' : ''; ?> style="background: #1a1a2e; color: #fff;">Education</option>
+                                <option value="Healthcare" <?php echo ($_POST['industry'] ?? '') === 'Healthcare' ? 'selected' : ''; ?> style="background: #1a1a2e; color: #fff;">Healthcare</option>
+                                <option value="Finance" <?php echo ($_POST['industry'] ?? '') === 'Finance' ? 'selected' : ''; ?> style="background: #1a1a2e; color: #fff;">Finance</option>
+                                <option value="E-Commerce" <?php echo ($_POST['industry'] ?? '') === 'E-Commerce' ? 'selected' : ''; ?> style="background: #1a1a2e; color: #fff;">E-Commerce</option>
+                                <option value="Other" <?php echo ($_POST['industry'] ?? '') === 'Other' ? 'selected' : ''; ?> style="background: #1a1a2e; color: #fff;">Other</option>
                             </select>
                         </div>
                     </div>
@@ -184,12 +305,12 @@
                     <div class="contact-field">
                         <label for="message">Message <span class="visually-hidden">(required)</span></label>
                         <textarea id="message" name="message" rows="5"
-                            placeholder="Enter your message here..." required></textarea>
+                            placeholder="Enter your message here..." required><?php echo h($_POST['message'] ?? ''); ?></textarea>
                     </div>
 
                     <div class="contact-footer">
                         <label class="contact-checkbox">
-                            <input type="checkbox" required aria-describedby="terms-desc">
+                            <input type="checkbox" name="terms" required aria-describedby="terms-desc">
                             <span id="terms-desc">
                                 I Agree to
                                 <a href="#" class="contact-link">Terms &amp; Conditions</a>

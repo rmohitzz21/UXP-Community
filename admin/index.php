@@ -138,12 +138,12 @@ function timeAgo($datetime) {
                 <span>Contact Messages</span>
               </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a href="members.php" class="nav-link">
                 <i class="bi bi-people-fill"></i>
                 <span>Members</span>
               </a>
-            </li>
+            </li> -->
             <li class="nav-item">
               <a href="team.php" class="nav-link">
                 <i class="bi bi-person-badge-fill"></i>
