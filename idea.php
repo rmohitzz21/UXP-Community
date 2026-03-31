@@ -1,9 +1,21 @@
 <?php
 require_once __DIR__ . '/includes/db.php';
 
+// Start session for flash messages
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 $message = '';
 $messageType = '';
 $ideas = [];
+
+// Check for flash message from redirect
+if (isset($_SESSION['flash_message'])) {
+    $message = $_SESSION['flash_message'];
+    $messageType = $_SESSION['flash_type'] ?? 'info';
+    unset($_SESSION['flash_message'], $_SESSION['flash_type']);
+}
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -57,11 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':image' => $imagePath
             ]);
             
-            $message = 'Your idea has been submitted successfully! We\'ll review it soon.';
-            $messageType = 'success';
-            
-            // Clear form
-            $_POST = [];
+            // Set flash message and redirect (PRG pattern)
+            $_SESSION['flash_message'] = 'Your idea has been submitted successfully! We\'ll review it soon.';
+            $_SESSION['flash_type'] = 'success';
+            header('Location: idea.php');
+            exit;
         } catch (PDOException $e) {
             error_log("Idea submission error: " . $e->getMessage());
             $message = 'An error occurred. Please try again later.';
@@ -198,6 +210,10 @@ try {
                         border-radius: 20px;
                         padding: 24px;
                         transition: transform 0.3s ease, box-shadow 0.3s ease;
+                        display: flex;
+                        flex-direction: column;
+                        overflow: hidden;
+                        min-height: 280px;
                 }
                 
                 .idea-item:hover {
@@ -211,37 +227,57 @@ try {
                         object-fit: cover;
                         border-radius: 12px;
                         margin-bottom: 16px;
+                        flex-shrink: 0;
                 }
                 
                 .idea-item h4 {
                         color: #fff;
                         font-size: 1.25rem;
                         margin-bottom: 8px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        flex-shrink: 0;
                 }
                 
                 .idea-item p {
                         color: rgba(255, 255, 255, 0.7);
                         font-size: 0.95rem;
                         line-height: 1.6;
+                        overflow: hidden;
+                        display: -webkit-box;
+                        -webkit-line-clamp: 4;
+                        -webkit-box-orient: vertical;
+                        flex-grow: 1;
+                        word-wrap: break-word;
+                        word-break: break-word;
+                        margin-bottom: 0;
                 }
                 
                 .idea-meta {
                         display: flex;
                         justify-content: space-between;
                         align-items: center;
-                        margin-top: 16px;
+                        margin-top: auto;
                         padding-top: 16px;
                         border-top: 1px solid rgba(255, 255, 255, 0.1);
+                        flex-shrink: 0;
                 }
                 
                 .idea-author {
                         color: #7b61ff;
                         font-weight: 500;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        max-width: 60%;
                 }
                 
                 .idea-date {
                         color: rgba(255, 255, 255, 0.5);
                         font-size: 0.85rem;
+                        white-space: nowrap;
+                        flex-shrink: 0;
                 }
 
                 /* File Input Styling */
