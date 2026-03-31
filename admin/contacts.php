@@ -1,10 +1,6 @@
 <?php
+require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../includes/db.php';
-
-// Start session for flash messages
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
 $message = '';
 $messageType = '';
@@ -338,13 +334,13 @@ function getInitials($name) {
             <div class="dropdown">
               <button class="admin-profile dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <div class="profile-avatar"><i class="bi bi-person-fill"></i></div>
-                <span class="profile-name">Admin</span>
+                <span class="profile-name"><?php echo h($_SESSION['admin_username'] ?? 'Admin'); ?></span>
               </button>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="#">Profile</a></li>
                 <li><a class="dropdown-item" href="settings.php">Settings</a></li>
                 <li><hr class="dropdown-divider" /></li>
-                <li><a class="dropdown-item text-danger" href="#">Logout</a></li>
+                <li><a class="dropdown-item text-danger" href="?logout=1">Logout</a></li>
               </ul>
             </div>
           </div>

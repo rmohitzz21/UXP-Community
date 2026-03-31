@@ -7,17 +7,17 @@
   --admin-bg: #0a0a1a;
   --admin-sidebar: #0f0f23;
   --admin-card: #1a1a2e;
-  --admin-border: rgba(255, 255, 255, 0.08);
+  --admin-border: rgba(255, 255, 255, 0.12);
   --primary: #7b61ff;
   --primary-dark: #6147bd;
   --primary-light: rgba(123, 97, 255, 0.15);
-  --success: #22c55e;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --info: #3b82f6;
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --info: #60a5fa;
   --text-primary: #ffffff;
-  --text-secondary: #a0a0b8;
-  --text-muted: #6b6b80;
+  --text-secondary: #c8c8d8;
+  --text-muted: #9090a8;
   --sidebar-width: 260px;
   --topbar-height: 70px;
   --transition: 0.3s ease;
@@ -36,8 +36,13 @@ body {
   min-height: 100vh;
 }
 
-h1, h2, h3 {
+h1, h2, h3, h4, h5, h6 {
   font-family: 'Gabarito', sans-serif;
+  color: var(--text-primary);
+}
+
+p {
+  color: var(--text-secondary);
 }
 
 /* ===========================
@@ -115,11 +120,12 @@ h1, h2, h3 {
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  color: var(--text-secondary);
+  color: #d0d0e0;
   text-decoration: none;
   border-radius: 10px;
   transition: all var(--transition);
-  font-size: 0.9375rem;
+  font-size: 0.95rem;
+  font-weight: 500;
 }
 
 .sidebar-nav .nav-link:hover {
@@ -146,7 +152,7 @@ h1, h2, h3 {
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  color: var(--text-secondary);
+  color: #d0d0e0;
   text-decoration: none;
   border-radius: 10px;
   transition: all var(--transition);
@@ -396,11 +402,12 @@ h1, h2, h3 {
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 2px;
+  color: #ffffff;
 }
 
 .stat-info p {
-  color: var(--text-muted);
-  font-size: 0.875rem;
+  color: #b8b8c8;
+  font-size: 0.9rem;
   margin: 0;
 }
 
@@ -479,19 +486,20 @@ h1, h2, h3 {
 .admin-table th {
   text-align: left;
   padding: 12px 16px;
-  color: var(--text-muted);
-  font-size: 0.75rem;
+  color: #b0b0c8;
+  font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border-bottom: 1px solid var(--admin-border);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .admin-table td {
   padding: 14px 16px;
   border-bottom: 1px solid var(--admin-border);
-  font-size: 0.875rem;
-  color: var(--text-secondary);
+  font-size: 0.9rem;
+  color: #e8e8f0;
 }
 
 .admin-table tr:last-child td {
@@ -499,7 +507,7 @@ h1, h2, h3 {
 }
 
 .admin-table tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(123, 97, 255, 0.05);
 }
 
 .user-info {
@@ -935,4 +943,442 @@ h1, h2, h3 {
   .admin-table td {
     padding: 10px 12px;
   }
+}
+
+/* ===========================
+   ENHANCED UI IMPROVEMENTS
+   =========================== */
+
+/* Better text contrast */
+.admin-table td {
+  color: #e0e0e8;
+}
+
+.admin-table th {
+  color: #9090a8;
+}
+
+/* Card titles */
+.admin-card .card-header h2 {
+  color: var(--text-primary);
+}
+
+/* Status badges improved */
+.status-badge {
+  text-transform: capitalize;
+}
+
+/* Form check inputs */
+.form-check-input {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.form-check-input:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+/* Alert styles for admin */
+.alert-success {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #4ade80;
+}
+
+.alert-danger {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.alert-warning {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
+}
+
+.alert-info {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
+}
+
+/* Modal improvements */
+.modal-content {
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border);
+}
+
+.modal-header {
+  border-bottom-color: var(--admin-border);
+}
+
+.modal-footer {
+  border-top-color: var(--admin-border);
+}
+
+.modal-title {
+  color: var(--text-primary);
+}
+
+.btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Empty state styling */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+
+.empty-state i {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state h4 {
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+/* Table row hover */
+.admin-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.admin-table tbody tr:hover {
+  background: rgba(123, 97, 255, 0.05);
+}
+
+/* Better link styling in admin */
+a.btn-action {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Stat card small text */
+.stat-info small {
+  font-size: 0.75rem;
+}
+
+.stat-info small.text-success {
+  color: var(--success) !important;
+}
+
+.stat-info small i {
+  font-size: 0.5rem;
+  margin-right: 4px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--admin-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ===========================
+   GLOBAL TEXT READABILITY FIXES
+   =========================== */
+
+/* All generic text elements */
+.admin-wrapper p,
+.admin-wrapper span,
+.admin-wrapper label,
+.admin-wrapper div {
+  color: inherit;
+}
+
+/* Card body text */
+.admin-card .card-body {
+  color: #e0e0f0;
+}
+
+.admin-card .card-body p {
+  color: #c8c8d8;
+}
+
+/* Form labels and inputs */
+.admin-card label,
+.form-label {
+  color: #d0d0e0 !important;
+  font-weight: 500;
+}
+
+.form-control,
+.form-select {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #f0f0f8 !important;
+}
+
+.form-control::placeholder {
+  color: #8888a0 !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: var(--primary) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(123, 97, 255, 0.2) !important;
+}
+
+/* Dropdown/select options */
+.form-select option {
+  background-color: #1a1a2e;
+  color: #e0e0f0;
+}
+
+/* Text areas */
+textarea.form-control {
+  color: #f0f0f8 !important;
+}
+
+/* Text muted override */
+.text-muted {
+  color: #a0a0b8 !important;
+}
+
+/* Table specific text */
+.admin-table td strong,
+.admin-table td b {
+  color: #ffffff;
+}
+
+.admin-table td small {
+  color: #a0a0b8;
+}
+
+/* Links in tables */
+.admin-table a {
+  color: #9999ff;
+}
+
+.admin-table a:hover {
+  color: #bbbbff;
+}
+
+/* Badge text */
+.badge {
+  font-weight: 600;
+}
+
+/* Section headers */
+.section-header h2,
+.page-header h1,
+.admin-card h2,
+.admin-card h3 {
+  color: #ffffff !important;
+}
+
+/* Description/subtitle text */
+.section-header p,
+.page-header p {
+  color: #b0b0c0;
+}
+
+/* Modal body text */
+.modal-body {
+  color: #d0d0e0;
+}
+
+.modal-body p {
+  color: #c8c8d8;
+}
+
+.modal-body label {
+  color: #d8d8e8;
+}
+
+/* Button text ensure visibility */
+.btn {
+  font-weight: 500;
+}
+
+.btn-secondary {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #e0e0f0;
+}
+
+.btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+/* Action buttons in table */
+.btn-action {
+  padding: 6px 10px;
+  font-size: 0.85rem;
+}
+
+.btn-action i {
+  font-size: 0.9rem;
+}
+
+/* Empty state improvements */
+.empty-state {
+  color: #a0a0b8;
+}
+
+.empty-state h4 {
+  color: #c0c0d0 !important;
+}
+
+.empty-state p {
+  color: #9090a8;
+}
+
+/* Event/item cards in admin */
+.event-card,
+.item-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.event-card h4,
+.item-card h4 {
+  color: #ffffff;
+}
+
+.event-card p,
+.item-card p {
+  color: #b8b8c8;
+}
+
+/* List group items */
+.list-group-item {
+  background-color: rgba(255, 255, 255, 0.03);
+  border-color: var(--admin-border);
+  color: #e0e0f0;
+}
+
+.list-group-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Dropdown menus */
+.dropdown-menu {
+  background-color: #1e1e32;
+  border: 1px solid var(--admin-border);
+}
+
+.dropdown-item {
+  color: #d0d0e0;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: rgba(123, 97, 255, 0.15);
+  color: #ffffff;
+}
+
+/* Tab navigation */
+.nav-tabs .nav-link {
+  color: #b0b0c0;
+}
+
+.nav-tabs .nav-link:hover {
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.nav-tabs .nav-link.active {
+  background-color: var(--admin-card);
+  border-color: var(--admin-border);
+  color: #ffffff;
+}
+
+/* Pagination */
+.pagination .page-link {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: var(--admin-border);
+  color: #c0c0d0;
+}
+
+.pagination .page-link:hover {
+  background-color: rgba(123, 97, 255, 0.2);
+  color: #ffffff;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+}
+
+/* Search input */
+input[type="search"],
+input[type="text"].search-input {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #f0f0f8 !important;
+}
+
+/* Ensure all header text is white */
+h1, h2, h3, h4, h5, h6 {
+  color: #ffffff;
+}
+
+/* Strong and bold text */
+strong, b {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Italic text */
+em, i:not(.bi):not(.fas):not(.far):not(.fab) {
+  color: inherit;
+}
+
+/* Code blocks */
+code {
+  background-color: rgba(123, 97, 255, 0.15);
+  color: #c8b6ff;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+pre {
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--admin-border);
+  color: #e0e0f0;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+/* Tooltips */
+.tooltip-inner {
+  background-color: #2a2a44;
+  color: #f0f0f8;
+}
+
+/* Card header link colors */
+.card-header a {
+  color: var(--primary);
+}
+
+.card-header a:hover {
+  color: #9999ff;
 }
