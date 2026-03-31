@@ -8,19 +8,48 @@ $stats = [
     'events' => 0,
     'registrations' => 0,
     'ideas' => 0,
-    'upcoming_events' => 0
+    'resources' => 0,
+    'upcoming_events' => 0,
+    'new_contacts' => 0
 ];
 
 try {
     $pdo = getDB();
-    $stats['members'] = $pdo->query("SELECT COUNT(*) FROM members")->fetchColumn() ?: 0;
-    $stats['contacts'] = $pdo->query("SELECT COUNT(*) FROM contacts")->fetchColumn() ?: 0;
-    $stats['events'] = $pdo->query("SELECT COUNT(*) FROM events")->fetchColumn() ?: 0;
-    $stats['registrations'] = $pdo->query("SELECT COUNT(*) FROM event_registrations")->fetchColumn() ?: 0;
-    $stats['ideas'] = $pdo->query("SELECT COUNT(*) FROM ideas")->fetchColumn() ?: 0;
-    $stats['upcoming_events'] = $pdo->query("SELECT COUNT(*) FROM events WHERE event_date >= CURDATE() AND status = 'active'")->fetchColumn() ?: 0;
+    
+    // Count members
+    try {
+        $stats['members'] = $pdo->query("SELECT COUNT(*) FROM members")->fetchColumn() ?: 0;
+    } catch (PDOException $e) {}
+    
+    // Count contacts
+    try {
+        $stats['contacts'] = $pdo->query("SELECT COUNT(*) FROM contacts")->fetchColumn() ?: 0;
+        $stats['new_contacts'] = $pdo->query("SELECT COUNT(*) FROM contacts WHERE status = 'new'")->fetchColumn() ?: 0;
+    } catch (PDOException $e) {}
+    
+    // Count events
+    try {
+        $stats['events'] = $pdo->query("SELECT COUNT(*) FROM events")->fetchColumn() ?: 0;
+        $stats['upcoming_events'] = $pdo->query("SELECT COUNT(*) FROM events WHERE event_date >= CURDATE() AND status = 'active'")->fetchColumn() ?: 0;
+    } catch (PDOException $e) {}
+    
+    // Count registrations
+    try {
+        $stats['registrations'] = $pdo->query("SELECT COUNT(*) FROM event_registrations")->fetchColumn() ?: 0;
+    } catch (PDOException $e) {}
+    
+    // Count ideas
+    try {
+        $stats['ideas'] = $pdo->query("SELECT COUNT(*) FROM ideas")->fetchColumn() ?: 0;
+    } catch (PDOException $e) {}
+    
+    // Count resources
+    try {
+        $stats['resources'] = $pdo->query("SELECT COUNT(*) FROM resources")->fetchColumn() ?: 0;
+    } catch (PDOException $e) {}
+    
 } catch (PDOException $e) {
-    // Tables might not exist yet
+    // Database connection issue
 }
 
 // Get recent contacts
@@ -28,33 +57,41 @@ $recentContacts = [];
 try {
     $pdo = getDB();
     $recentContacts = $pdo->query("SELECT * FROM contacts ORDER BY created_at DESC LIMIT 5")->fetchAll();
-} catch (PDOException $e) {
-    // Silently fail
-}
+} catch (PDOException $e) {}
 
 // Get upcoming events
 $upcomingEvents = [];
 try {
     $pdo = getDB();
     $upcomingEvents = $pdo->query("
-        SELECT e.*, (SELECT COUNT(*) FROM event_registrations WHERE event_id = e.id) as reg_count 
+        SELECT e.*, 
+            (SELECT COUNT(*) FROM event_registrations WHERE event_id = e.id) as reg_count 
         FROM events e 
         WHERE e.event_date >= CURDATE() AND e.status = 'active' 
         ORDER BY e.event_date ASC 
         LIMIT 3
     ")->fetchAll();
-} catch (PDOException $e) {
-    // Silently fail
-}
+} catch (PDOException $e) {}
 
-// Get recent members
-$recentMembers = [];
+// Get recent ideas
+$recentIdeas = [];
 try {
     $pdo = getDB();
-    $recentMembers = $pdo->query("SELECT * FROM members ORDER BY created_at DESC LIMIT 4")->fetchAll();
-} catch (PDOException $e) {
-    // Silently fail
-}
+    $recentIdeas = $pdo->query("SELECT * FROM ideas ORDER BY created_at DESC LIMIT 5")->fetchAll();
+} catch (PDOException $e) {}
+
+// Get recent registrations
+$recentRegistrations = [];
+try {
+    $pdo = getDB();
+    $recentRegistrations = $pdo->query("
+        SELECT er.*, e.title as event_title 
+        FROM event_registrations er 
+        LEFT JOIN events e ON er.event_id = e.id 
+        ORDER BY er.created_at DESC 
+        LIMIT 5
+    ")->fetchAll();
+} catch (PDOException $e) {}
 
 // Helper for initials
 function getInitials($name) {
@@ -249,21 +286,24 @@ function timeAgo($datetime) {
           <div class="stats-grid">
             <div class="stat-card">
               <div class="stat-icon bg-primary">
-                <i class="bi bi-people-fill"></i>
-              </div>
-              <div class="stat-info">
-                <h3><?php echo number_format($stats['members']); ?></h3>
-                <p>Total Members</p>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon bg-success">
                 <i class="bi bi-envelope-fill"></i>
               </div>
               <div class="stat-info">
                 <h3><?php echo number_format($stats['contacts']); ?></h3>
                 <p>Contact Messages</p>
+                <?php if ($stats['new_contacts'] > 0): ?>
+                <small class="text-success"><i class="bi bi-circle-fill"></i> <?php echo $stats['new_contacts']; ?> new</small>
+                <?php endif; ?>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon bg-success">
+                <i class="bi bi-lightbulb-fill"></i>
+              </div>
+              <div class="stat-info">
+                <h3><?php echo number_format($stats['ideas']); ?></h3>
+                <p>Community Ideas</p>
               </div>
             </div>
 
@@ -300,6 +340,12 @@ function timeAgo($datetime) {
                   </a>
                 </div>
                 <div class="card-body">
+                  <?php if (empty($recentContacts)): ?>
+                  <div class="text-center py-4 text-muted">
+                    <i class="bi bi-envelope-open" style="font-size: 2rem;"></i>
+                    <p class="mt-2 mb-0">No contact messages yet</p>
+                  </div>
+                  <?php else: ?>
                   <div class="table-responsive">
                     <table class="admin-table">
                       <thead>
@@ -308,93 +354,40 @@ function timeAgo($datetime) {
                           <th>Email</th>
                           <th>Industry</th>
                           <th>Date</th>
+                          <!-- <th>Status</th> -->
                           <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
+                        <?php foreach ($recentContacts as $contact): ?>
                         <tr>
                           <td>
                             <div class="user-info">
-                              <div class="user-avatar">RK</div>
-                              <span>Rahul Kumar</span>
+                              <div class="user-avatar"><?php echo getInitials($contact['name']); ?></div>
+                              <span><?php echo h($contact['name']); ?></span>
                             </div>
                           </td>
-                          <td>rahul@example.com</td>
-                          <td><span class="badge-industry">Technology</span></td>
-                          <td>Mar 27, 2026</td>
-                          <td><span class="status-badge new">New</span></td>
+                          <td><?php echo h($contact['email']); ?></td>
                           <td>
-                            <button class="btn-action" title="View">
+                            <?php if (!empty($contact['industry'])): ?>
+                            <span class="badge-industry"><?php echo h($contact['industry']); ?></span>
+                            <?php else: ?>
+                            <span class="text-muted">-</span>
+                            <?php endif; ?>
+                          </td>
+                          <td><?php echo date('M d, Y', strtotime($contact['created_at'])); ?></td>
+                              <!-- <td><span class="status-badge <?php echo $contact['status']; ?>"><?php echo ucfirst($contact['status']); ?></span></td> -->
+                          <td>
+                            <a href="contacts.php" class="btn-action" title="View">
                               <i class="bi bi-eye"></i>
-                            </button>
-                            <button class="btn-action" title="Reply">
-                              <i class="bi bi-reply"></i>
-                            </button>
+                            </a>
                           </td>
                         </tr>
-                        <tr>
-                          <td>
-                            <div class="user-info">
-                              <div class="user-avatar">PS</div>
-                              <span>Priya Sharma</span>
-                            </div>
-                          </td>
-                          <td>priya@design.co</td>
-                          <td><span class="badge-industry">Design</span></td>
-                          <td>Mar 26, 2026</td>
-                          <td><span class="status-badge pending">Pending</span></td>
-                          <td>
-                            <button class="btn-action" title="View">
-                              <i class="bi bi-eye"></i>
-                            </button>
-                            <button class="btn-action" title="Reply">
-                              <i class="bi bi-reply"></i>
-                            </button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div class="user-info">
-                              <div class="user-avatar">AM</div>
-                              <span>Arjun Mehta</span>
-                            </div>
-                          </td>
-                          <td>arjun@startup.io</td>
-                          <td><span class="badge-industry">E-Commerce</span></td>
-                          <td>Mar 25, 2026</td>
-                          <td><span class="status-badge replied">Replied</span></td>
-                          <td>
-                            <button class="btn-action" title="View">
-                              <i class="bi bi-eye"></i>
-                            </button>
-                            <button class="btn-action" title="Reply">
-                              <i class="bi bi-reply"></i>
-                            </button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div class="user-info">
-                              <div class="user-avatar">NS</div>
-                              <span>Neha Singh</span>
-                            </div>
-                          </td>
-                          <td>neha@health.org</td>
-                          <td><span class="badge-industry">Healthcare</span></td>
-                          <td>Mar 24, 2026</td>
-                          <td><span class="status-badge replied">Replied</span></td>
-                          <td>
-                            <button class="btn-action" title="View">
-                              <i class="bi bi-eye"></i>
-                            </button>
-                            <button class="btn-action" title="Reply">
-                              <i class="bi bi-reply"></i>
-                            </button>
-                          </td>
-                        </tr>
+                        <?php endforeach; ?>
                       </tbody>
                     </table>
                   </div>
+                  <?php endif; ?>
                 </div>
               </div>
             </div>
@@ -427,7 +420,7 @@ function timeAgo($datetime) {
                 </div>
               </div>
 
-              <div class="admin-card">
+              <!-- <div class="admin-card">
                 <div class="card-header">
                   <h2>New Members</h2>
                   <a href="members.php" class="btn btn-sm btn-outline-primary">
@@ -470,7 +463,7 @@ function timeAgo($datetime) {
                     </li>
                   </ul>
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
 
@@ -485,52 +478,96 @@ function timeAgo($datetime) {
                   </a>
                 </div>
                 <div class="card-body">
-                  <div class="events-grid">
-                    <div class="event-card">
-                      <div class="event-date">
-                        <span class="day">05</span>
-                        <span class="month">APR</span>
-                      </div>
-                      <div class="event-info">
-                        <h4>UX Design Workshop</h4>
-                        <p><i class="bi bi-clock"></i> 10:00 AM - 2:00 PM</p>
-                        <p><i class="bi bi-geo-alt"></i> Virtual Event</p>
-                      </div>
-                      <span class="event-attendees">
-                        <i class="bi bi-people"></i> 48 registered
-                      </span>
-                    </div>
-
-                    <div class="event-card">
-                      <div class="event-date">
-                        <span class="day">12</span>
-                        <span class="month">APR</span>
-                      </div>
-                      <div class="event-info">
-                        <h4>Design System Masterclass</h4>
-                        <p><i class="bi bi-clock"></i> 3:00 PM - 5:00 PM</p>
-                        <p><i class="bi bi-geo-alt"></i> Ahmedabad Office</p>
-                      </div>
-                      <span class="event-attendees">
-                        <i class="bi bi-people"></i> 32 registered
-                      </span>
-                    </div>
-
-                    <div class="event-card">
-                      <div class="event-date">
-                        <span class="day">20</span>
-                        <span class="month">APR</span>
-                      </div>
-                      <div class="event-info">
-                        <h4>Community Meetup</h4>
-                        <p><i class="bi bi-clock"></i> 6:00 PM - 9:00 PM</p>
-                        <p><i class="bi bi-geo-alt"></i> Law Garden, Ahmedabad</p>
-                      </div>
-                      <span class="event-attendees">
-                        <i class="bi bi-people"></i> 85 registered
-                      </span>
-                    </div>
+                  <?php if (empty($upcomingEvents)): ?>
+                  <div class="text-center py-4 text-muted">
+                    <i class="bi bi-calendar-x" style="font-size: 2rem;"></i>
+                    <p class="mt-2 mb-0">No upcoming events scheduled</p>
+                    <a href="events.php" class="btn btn-sm btn-primary mt-3">Create Event</a>
                   </div>
+                  <?php else: ?>
+                  <div class="events-grid">
+                    <?php foreach ($upcomingEvents as $event): ?>
+                    <div class="event-card">
+                      <div class="event-date">
+                        <span class="day"><?php echo date('d', strtotime($event['event_date'])); ?></span>
+                        <span class="month"><?php echo strtoupper(date('M', strtotime($event['event_date']))); ?></span>
+                      </div>
+                      <div class="event-info">
+                        <h4><?php echo h($event['title']); ?></h4>
+                        <?php if (!empty($event['event_time'])): ?>
+                        <p><i class="bi bi-clock"></i> <?php echo date('g:i A', strtotime($event['event_time'])); ?></p>
+                        <?php endif; ?>
+                        <?php if (!empty($event['location'])): ?>
+                        <p><i class="bi bi-geo-alt"></i> <?php echo h($event['location']); ?></p>
+                        <?php endif; ?>
+                      </div>
+                      <span class="event-attendees">
+                        <i class="bi bi-people"></i> <?php echo $event['reg_count'] ?? 0; ?> registered
+                      </span>
+                    </div>
+                    <?php endforeach; ?>
+                  </div>
+                  <?php endif; ?>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RECENT IDEAS -->
+          <div class="row g-4 mt-2">
+            <div class="col-12">
+              <div class="admin-card">
+                <div class="card-header">
+                  <h2>Recent Community Ideas</h2>
+                  <a href="ideas.php" class="btn btn-sm btn-outline-primary">
+                    View All
+                  </a>
+                </div>
+                <div class="card-body">
+                  <?php if (empty($recentIdeas)): ?>
+                  <div class="text-center py-4 text-muted">
+                    <i class="bi bi-lightbulb" style="font-size: 2rem;"></i>
+                    <p class="mt-2 mb-0">No ideas submitted yet</p>
+                  </div>
+                  <?php else: ?>
+                  <div class="table-responsive">
+                    <table class="admin-table">
+                      <thead>
+                        <tr>
+                          <th>Submitted By</th>
+                          <th>Title</th>
+                          <th>Description</th>
+                          <th>Date</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <?php foreach ($recentIdeas as $idea): ?>
+                        <tr>
+                          <td>
+                            <div class="user-info">
+                              <div class="user-avatar"><?php echo getInitials($idea['name']); ?></div>
+                              <span><?php echo h($idea['name']); ?></span>
+                            </div>
+                          </td>
+                          <td><strong><?php echo h($idea['title']); ?></strong></td>
+                          <td>
+                            <span class="text-truncate d-inline-block" style="max-width: 200px;">
+                              <?php echo h(substr($idea['description'], 0, 80)); ?><?php echo strlen($idea['description']) > 80 ? '...' : ''; ?>
+                            </span>
+                          </td>
+                          <td><?php echo timeAgo($idea['created_at']); ?></td>
+                          <td>
+                            <a href="ideas.php" class="btn-action" title="View">
+                              <i class="bi bi-eye"></i>
+                            </a>
+                          </td>
+                        </tr>
+                        <?php endforeach; ?>
+                      </tbody>
+                    </table>
+                  </div>
+                  <?php endif; ?>
                 </div>
               </div>
             </div>
