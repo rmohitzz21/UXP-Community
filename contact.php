@@ -342,7 +342,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="final-cta-actions">
           <a href="#" class="btn-primary">Start a Collaboration</a>
-          <a href="#" class="btn-outline">Visit the Shop</a>
+          <a href="www.uxpacifShop.com" class="btn-outline" target="_blank">Visit the Shop</a>
         </div>
       </div>
     </section>
