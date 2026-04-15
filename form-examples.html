@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Form Integration Examples</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <!-- Contact -->
+  <form class="js-ajax-form" method="post" action="includes/form-handler.php">
+    <input type="hidden" name="form_type" value="contact">
+    <input type="text" name="website" value="" style="display:none">
+    <input name="name" placeholder="Name" required>
+    <input name="email" type="email" placeholder="Email" required>
+    <input name="phone" placeholder="Phone">
+    <input name="industry" placeholder="Industry">
+    <textarea name="message" placeholder="Message" required></textarea>
+    <button type="submit">Submit Contact</button>
+  </form>
+
+  <!-- Join Community -->
+  <form class="js-ajax-form" method="post" action="includes/form-handler.php">
+    <input type="hidden" name="form_type" value="join_community">
+    <input type="text" name="website" value="" style="display:none">
+    <input name="email" type="email" placeholder="Email" required>
+    <button type="submit">Join Community</button>
+  </form>
+
+  <!-- Event Registration -->
+  <form class="js-ajax-form" method="post" action="includes/form-handler.php">
+    <input type="hidden" name="form_type" value="event_registration">
+    <input type="text" name="website" value="" style="display:none">
+    <input name="name" placeholder="Name" required>
+    <input name="email" type="email" placeholder="Email" required>
+    <input name="phone" placeholder="Phone">
+    <input name="company" placeholder="Company">
+    <textarea name="message" placeholder="Message"></textarea>
+    <button type="submit">Register Event</button>
+  </form>
+
+  <!-- Share Your Idea -->
+  <form class="js-ajax-form" method="post" action="includes/form-handler.php">
+    <input type="hidden" name="form_type" value="share_your idea">
+    <input type="text" name="website" value="" style="display:none">
+    <input name="name" placeholder="Name" required>
+    <input name="email" type="email" placeholder="Email" required>
+    <input name="idea" placeholder="Idea" required>
+    <textarea name="details" placeholder="Details" required></textarea>
+    <button type="submit">Share Idea</button>
+  </form>
+
+  <script src="assets/js/form.js"></script>
+</body>
+</html>

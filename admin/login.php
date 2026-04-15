@@ -1,10 +1,7 @@
 <?php
+require_once __DIR__ . '/../includes/session.php';
+uxp_start_session();
 require_once __DIR__ . '/../includes/db.php';
-
-// Start session
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
 // If already logged in, redirect to dashboard
 if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {

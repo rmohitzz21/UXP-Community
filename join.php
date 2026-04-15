@@ -97,7 +97,9 @@
             Join us to connect, share, and grow.
           </p>
           <div class="share-ideas-card">
-            <form class="join-form" action="#" method="post" novalidate>
+            <form class="join-form js-ajax-form" action="includes/form-handler.php" method="post" novalidate>
+              <input type="hidden" name="form_type" value="join_community">
+              <input type="text" name="website" value="" style="display:none" tabindex="-1" autocomplete="off">
               <div class="input-group-wrapper">
                 <label for="join-email" class="visually-hidden">Email address</label>
                 <input type="email" id="join-email" name="email" class="form-control join-input" placeholder="Enter your email address" aria-label="Email address" required autocomplete="email">
@@ -161,6 +163,9 @@
                 >
                   <img src="img/be.png" alt="Behance" />
                 </a>
+                    <a href="https://medium.com/@uxpacific" target="_blank" rel="noopener">
+              <img src="img/medium.png" alt="Medium" /> 
+</a>
               </div>
             </div>
 
@@ -183,6 +188,8 @@
       </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="./assets/js/form.js"></script>
 
   </body>
 </html>

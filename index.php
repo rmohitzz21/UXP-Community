@@ -9,48 +9,55 @@ $resources = [];
 
 try {
     $pdo = getDB();
-    
-    // Upcoming events
-    $stmt = $pdo->query("
-        SELECT e.*, 
-               (SELECT COUNT(*) FROM event_registrations WHERE event_id = e.id) as registration_count 
-        FROM events e 
-        WHERE e.event_date >= CURDATE() AND e.status = 'active' 
-        ORDER BY e.event_date ASC 
-        LIMIT 8
-    ");
-    $upcomingEvents = $stmt->fetchAll();
-    
-    // Past events
-    $stmt = $pdo->query("
-        SELECT e.*, 
-               (SELECT COUNT(*) FROM event_registrations WHERE event_id = e.id) as registration_count 
-        FROM events e 
-        WHERE e.event_date < CURDATE() OR e.status = 'completed' 
-        ORDER BY e.event_date DESC 
-        LIMIT 8
-    ");
-    $pastEvents = $stmt->fetchAll();
-    
-    // Team members
-    $stmt = $pdo->query("
-        SELECT * FROM team_members 
-        WHERE is_active = 1 
-        ORDER BY display_order ASC, created_at DESC 
-        LIMIT 12
-    ");
-    $teamMembers = $stmt->fetchAll();
-    
-    // Resources
-    $stmt = $pdo->query("
-        SELECT * FROM resources 
-        WHERE is_active = 1 
-        ORDER BY created_at DESC 
-        LIMIT 8
-    ");
-    $resources = $stmt->fetchAll();
 } catch (PDOException $e) {
-    // Database not set up yet, use empty arrays
+    $pdo = null;
+}
+
+if ($pdo) {
+    // Keep each section independent so one broken table doesn't hide all homepage data.
+    try {
+        $stmt = $pdo->query("
+            SELECT e.*, 
+                   (SELECT COUNT(*) FROM event_registrations WHERE event_id = e.id) as registration_count 
+            FROM events e 
+            WHERE e.event_date >= CURDATE() AND e.status = 'active' 
+            ORDER BY e.event_date ASC 
+            LIMIT 8
+        ");
+        $upcomingEvents = $stmt->fetchAll();
+    } catch (PDOException $e) {}
+
+    try {
+        $stmt = $pdo->query("
+            SELECT e.*, 
+                   (SELECT COUNT(*) FROM event_registrations WHERE event_id = e.id) as registration_count 
+            FROM events e 
+            WHERE e.event_date < CURDATE() OR e.status = 'completed' 
+            ORDER BY e.event_date DESC 
+            LIMIT 8
+        ");
+        $pastEvents = $stmt->fetchAll();
+    } catch (PDOException $e) {}
+
+    try {
+        $stmt = $pdo->query("
+            SELECT * FROM team_members 
+            WHERE is_active = 1 
+            ORDER BY display_order ASC, created_at DESC 
+            LIMIT 12
+        ");
+        $teamMembers = $stmt->fetchAll();
+    } catch (PDOException $e) {}
+
+    try {
+        $stmt = $pdo->query("
+            SELECT * FROM resources 
+            WHERE is_active = 1 
+            ORDER BY created_at DESC 
+            LIMIT 8
+        ");
+        $resources = $stmt->fetchAll();
+    } catch (PDOException $e) {}
 }
 
 // Helper for resource type tag
@@ -149,9 +156,7 @@ function getResourceTag($type) {
             </ul>
           </div>
 
-          <div class="d-none d-lg-block">
-            <a href="contact.php" class="btn btn-primary-gradient">Contact Us</a>
-          </div>
+         
         </div>
       </div>
     </nav>
@@ -203,14 +208,18 @@ function getResourceTag($type) {
                 </div>
                 <div class="ui-body">
                   <div class="ui-message">
-                    <div class="ui-avatar" style="background: #7b61ff">AA</div>
+                    <div class="ui-avatar" style="background: #7b61ff">
+                      <img src="img/hbb.png" alt="Aaradhya Aarya" height="32" width="32" loading="lazy">
+                    </div>
                     <div class="ui-text">
                       <span class="name">Aaradhya Aarya</span>
                       <p>Has anyone tried the new Figma update? It's intense! 🎨</p>
                     </div>
                   </div>
                   <div class="ui-message">
-                    <div class="ui-avatar" style="background: #2dd4bf">ZP</div>
+                    <div class="ui-avatar" style="background: #2dd4bf">
+                      <img src="img/vwv.png" alt="Zula Prajapati" height="32" width="32" loading="lazy">
+                    </div>
                     <div class="ui-text">
                       <span class="name">Zula Prajapati</span>
                       <p>Yes! The new dev mode is a lifesaver for handoffs. code excellence 🚀</p>
@@ -955,6 +964,10 @@ function getResourceTag($type) {
                 >
                   <img src="img/be.png" alt="Behance" />
                 </a>
+
+                    <a href="https://medium.com/@uxpacific" target="_blank" rel="noopener">
+              <img src="img/medium.png" alt="Medium" /> </a>
+                
               </div>
             </div>
 

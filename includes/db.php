@@ -4,11 +4,35 @@
  * UX Pacific Community
  */
 
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'uxcommunity');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_CHARSET', 'utf8mb4');
+// define('DB_HOST', 'localhost');
+// define('DB_NAME', 'uxcommunity');
+// define('DB_USER', 'root');
+// define('DB_PASS', '');
+// define('DB_CHARSET', 'utf8mb4');
+
+// Optional override file (not committed): copy db.local.example.php to db.local.php
+if (is_readable(__DIR__ . '/db.local.php')) {
+    require __DIR__ . '/db.local.php';
+}
+
+// When PHP runs on the same machine as MySQL (typical shared hosting), use localhost — not the server's public IP.
+// If MySQL is on another host, set UXP_DB_HOST in the server environment or db.local.php.
+if (!defined('DB_HOST')) {
+    $envHost = getenv('UXP_DB_HOST');
+    define('DB_HOST', ($envHost !== false && $envHost !== '') ? $envHost : 'localhost');
+}
+if (!defined('DB_NAME')) {
+    define('DB_NAME', 'survevap_community');
+}
+if (!defined('DB_USER')) {
+    define('DB_USER', 'survevap_community');
+}
+if (!defined('DB_PASS')) {
+    define('DB_PASS', 'UXPacific#2025');
+}
+if (!defined('DB_CHARSET')) {
+    define('DB_CHARSET', 'utf8mb4');
+}
 
 /**
  * Get PDO Database Connection

@@ -314,7 +314,9 @@ if (isset($_GET['success']) && $_GET['success'] == 1 && $event) {
                 <i class="bi bi-person-plus me-2" style="color: #7b61ff;"></i>Register for This Event
             </h2>
             
-            <form method="POST" id="registrationForm">
+            <form method="POST" id="registrationForm" class="js-ajax-form" action="includes/form-handler.php">
+                <input type="hidden" name="form_type" value="event_registration">
+                <input type="text" name="website" value="" style="display:none" tabindex="-1" autocomplete="off">
                 <div class="row g-4">
                     <div class="col-md-6">
                         <label class="form-label">Full Name *</label>
@@ -371,5 +373,7 @@ if (isset($_GET['success']) && $_GET['success'] == 1 && $event) {
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="./assets/js/form.js"></script>
 </body>
 </html>

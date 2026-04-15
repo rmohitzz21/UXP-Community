@@ -1,10 +1,7 @@
 <?php
+require_once __DIR__ . '/includes/session.php';
+uxp_start_session();
 require_once __DIR__ . '/includes/db.php';
-
-// Start session for flash messages
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
 $message = '';
 $messageType = '';
@@ -432,7 +429,9 @@ try {
 
                     <!-- FORM CONTAINER -->
                     <div class="idea-card" id="idea-card-container">
-                        <form class="idea-form" method="POST" enctype="multipart/form-data">
+                        <form class="idea-form js-ajax-form" method="POST" enctype="multipart/form-data" action="includes/form-handler.php">
+                            <input type="hidden" name="form_type" value="share_your idea">
+                            <input type="text" name="website" value="" style="display:none" tabindex="-1" autocomplete="off">
                             <div class="contact-row">
                                 <div class="contact-field">
                                     <input type="text" name="name" placeholder="Your Name" 
@@ -529,6 +528,8 @@ try {
                                 <a href="https://www.behance.net/ux_pacific" target="_blank" rel="noopener">
                                     <img src="img/be.png" alt="Behance" />
                                 </a>
+                                    <a href="https://medium.com/@uxpacific" target="_blank" rel="noopener">
+              <img src="img/medium.png" alt="Medium" /></a>
                             </div>
                         </div>
 
@@ -551,6 +552,8 @@ try {
             </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="./assets/js/form.js"></script>
         <script>
             function updateFileName(input) {
                 const label = document.getElementById('file-name');

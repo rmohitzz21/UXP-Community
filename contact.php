@@ -1,10 +1,7 @@
 <?php
+require_once __DIR__ . '/includes/session.php';
+uxp_start_session();
 require_once __DIR__ . '/includes/db.php';
-
-// Start session for flash messages
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
 $message = '';
 $messageType = '';
@@ -270,7 +267,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <!-- RIGHT: Form -->
-                <form class="contact-form" action="contact.php" method="post" novalidate>
+                <form class="contact-form js-ajax-form" action="includes/form-handler.php" method="post" novalidate>
+                    <input type="hidden" name="form_type" value="contact">
+                    <input type="text" name="website" value="" style="display:none" tabindex="-1" autocomplete="off">
                     <div class="contact-row">
                         <div class="contact-field">
                             <label for="name">Name <span class="visually-hidden">(required)</span></label>
@@ -396,6 +395,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 >
                   <img src="img/be.png" alt="Behance" />
                 </a>
+                    <a href="https://medium.com/@uxpacific" target="_blank" rel="noopener">
+                  <img src="img/medium.png" alt="Medium" /></a>
               </div>
             </div>
 
@@ -420,6 +421,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="./assets/js/form.js"></script>
     <script src="./js/script.js"></script>
   </body>
 </html>
